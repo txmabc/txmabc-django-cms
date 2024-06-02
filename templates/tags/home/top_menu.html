@@ -1,0 +1,18 @@
+{% load home_navigation_tags %}
+{% load utils %}
+<ul>
+    <li class="active"><a href="/" title="网站首页">网站首页</a></li>
+    {% if cate_items %}
+        {% for item in cate_items %}
+            <li><a href="{% get_cate_home_url item.cateid item.catetype item.cateurl %}">{{ item.catename }}</a>
+            {% if item.children %}
+                <ul>
+                    {% for citem in item.children %}
+                    <li><a href="{% get_cate_home_url citem.cateid citem.catetype citem.cateurl %}">{{ citem.catename }}</a>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            </li>
+        {% endfor %}
+    {% endif %}
+</ul>

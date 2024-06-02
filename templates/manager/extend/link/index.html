@@ -1,0 +1,273 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>链接管理</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+<body>
+    <div class="position">当前位置：扩展管理 > <a href="{% url 'manager:link_index' %}">链接管理</a></div>
+    <div class="border">
+        <!---->
+        <div class="navbar">
+            <div class="lefter">
+                <a href="javascript:;" data-url="{% url 'manager:link_add' %}" class="add-iframe ui-btn ui-btn-info ui-mr-sm">添加链接</a>
+                <a href="javascript:;" class="ui-btn ui-btn-info ui-dropdown-show ui-mr-sm" data-target="#dropdown-1">批量操作</a>
+                <a href="{% url 'manager:link_config' %}" class="ui-btn ui-btn-yellow ui-mr-sm">链接配置</a>
+                
+                <div class="ui-dropdown" id="dropdown-1">
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="1">批量启用</a>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="2">批量锁定</a>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="3">批量删除</a>
+                </div>
+                <span class="ui-btn-group ui-btn-group-yellow ui-btn-group-bg">
+                    <a class="ui-btn-group-item{% if type == 0 %} active{% endif %}" href="/manager/link/index/?type=0">全部</a>
+                    <a class="ui-btn-group-item{% if type == 1 %} active{% endif %}" href="/manager/link/index/?type=1">未审</a>
+                    <a class="ui-btn-group-item{% if type == 2 %} active{% endif %}" href="/manager/link/index/?type=2">已审</a>
+                    <a class="ui-btn-group-item{% if type == 3 %} active{% endif %}" href="/manager/link/index/?type=3">文字</a>
+                    <a class="ui-btn-group-item{% if type == 4 %} active{% endif %}" href="/manager/link/index/?type=4">Logo</a>
+                </span>
+            </div>            
+        </div>
+
+        <form method="post" class="ui-form">
+        <div class="ui-table-wrap">
+        <table class="ui-table ui-table-border ui-table-hover ui-table-striped ui-mb ui-mt">
+            <thead class="ui-thead-gray">
+                <tr>
+                	<th width="30" height="30"><label class="ui-checkbox tips" data-align="right-top" data-title="全选/取消"><input type="checkbox" class="checkall" value=""><i></i></label></th>
+                    <th width="80">排序</th>
+                    <th width="80">ID</th>
+                    <th>网站名称</th>
+                    <th width="300">网址</th>
+                    {% if LINK_CLASS == 1 %}<th width="130">分类</th>{% endif %}
+                    <th width="80">状态</th>
+                    <th width="150">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not page_obj %}
+                    <tr>
+                        <td colspan="{% if LINK_CLASS == 0 %}7{% else %}8{% endif %}">暂无资料</td>
+                    </tr>
+                {% endif %}
+                {% if page_obj %}
+                    {% for item in page_obj %}
+                        <tr>
+                            <td><label class="ui-checkbox"><input type="checkbox" name="id" value="{{item.id}}"><i></i></label></td>
+                            <td><input type="hidden" name="mid[]" value="{{item.id}}"><input type="text" class="ui-form-ip" name="ordnum[]" id="ordnum_{{item.id}}" value="{{item.ordnum}}" data-rule="required;int;"></td>
+                            <td>{{item.id}}</td>
+                            <td class="ui-text-left">{{item.webname}}</td>
+                            <td class="ui-text-left"><a href="{{item.weburl}}" target="_blank">{{item.weburl}}</a></td>
+                            {% if LINK_CLASS == 1 %}<td>{{ item.classid }}</td>{% endif %}
+                            <td><label class="ui-switch ui-switch-info"><input type="checkbox" {% if item.islock == 1 %} checked{% endif %} data-url="{% url 'manager:link_switchs' item.id %}"><span class="ui-switch-checkbox ui-switch-text"></span></label></td>
+                            <td><a href="javascript:;" data-url="{% url 'manager:link_edit' item.id %}" class="edit-iframe"><span class="ui-icon-edit"></span> 编辑</a>　<a href="javascript:;" class="del" data-url="{% url 'manager:link_del' item.id %}"><span class="ui-icon-delete"></span> 删除</a></td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+        </div>
+        {% if page_obj %}
+            <div class="ui-page ui-page-right ui-page-info">
+                <div class="ui-page-other">
+                    {% csrf_token %}
+                    <button type="submit" class="ui-btn ui-btn-yellow">保存排序</button>
+                </div>
+                <div class="ui-page-list">
+                    <ul>
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page=1">首页</a></li>
+                            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+                        {% endif %}
+                        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+                            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        </form>
+        <!---->
+    </div>
+
+<script>
+
+$(function()
+{
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    $(".add-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"添加链接",
+			'text':url,
+			'width':'600px',
+			'height':'390px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	$(".edit-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"编辑链接",
+			'text':url,
+			'width':'600px',
+			'height':'390px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	$('.ui-switch input[type=checkbox]').on('click',function()
+	{
+		var url=$(this).attr("data-url");
+		var result=($(this).is(':checked'))?1:0;
+		$.ajax(
+		{
+			url:url,
+			type:"post",
+			dataType:'json',
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+			data:"islock="+result,
+			error:function(e){alert(e.responseText);},
+			success:function(d)
+			{
+				if(d.state=='success')
+				{
+					wmcms.success(d.msg);
+				}
+				else
+				{
+					wmcms.error(d.msg);
+				}
+			}
+		});
+	});
+	$(".btach").click(function()
+	{
+		var type=$(this).attr("type");
+		var data=[];
+		$(".ui-form").find("input[type=checkbox]:checked").each(function()
+		{
+			if($(this).attr("class")!='checkall' && !$(this).closest("label").hasClass("ui-switch"))
+			{
+				data.push($(this).val());
+			}
+		});
+        if(data.length==0)
+        {
+            wmcms.error('至少选择一条内容');
+        }
+        else
+        {
+            $.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'{U("btach")}',
+                data:'token={$token}&id='+data.join(",")+'&type='+type,
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+				{
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='{THIS_LOCAL}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+        }
+    });
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'{THIS_LOCAL}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='{THIS_LOCAL}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+    $(".del").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要删除？不可恢复！",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					data:'token={$token}',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='{THIS_LOCAL}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+})
+</script>
+</body>
+</html>

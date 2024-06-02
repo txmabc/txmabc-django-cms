@@ -1,0 +1,109 @@
+{% load static %}
+{% load utils %}
+{% include "home/mobile/include/top.html" %}
+<title>{{ SEO_TITLE }}</title>
+<meta name="keywords" content="{{ SEO_KEY }}">
+<meta name="description" content="{{ SEO_DESC }}">
+<link rel="shortcut icon" href="{% static '/favicon.ico' %}"/>
+<link rel="bookmark" href="{% static '/favicon.ico' %}"/>
+</head>
+<body>
+    <div class="ui-topbar ui-topbar-black ui-mwidth ui-fixed-top">
+		<div class="ui-topbar-logo ui-flex-fill"><a href="/" title="网站首页"><img src="{{ WEB_LOGO }}" alt="{{ WEB_NAME }}" style="max-height: 30px;"></a></div>
+		<div class="ui-topbar-right"><a href="javascript:;" class="ui-offside-show" data-target="#ui-offside-nav"><i class="ui-icon-lists"></i></a></div>
+	</div>
+    {% include "home/mobile/include/nav.html" %}
+    <!--Banner部分开始-->
+	<div class="ui-mwidth banner">
+    	<div class="ui-carousel" data-arrow="false">
+            <div class="ui-carousel-inner">
+            	{% for_rs table="manager_advertmodel" where="akey='mobile' and islock=1" %}
+                    {% if rs.datalist %}
+                        {% for item in rs.datalist|json_decode %}
+                        <div class="ui-carousel-item{% if forloop.counter == 1 %} active{% endif %}"><a href="{{ item.url }}"><img src="{{ item.image }}" alt="{{ item.desc }}"></a></div>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor_rs %}
+            </div>
+        </div>
+    </div>
+	<!--Banner部分结束-->
+
+    <div class="ui-mwidth ui-mt">
+		<div class="ui-box ui-p-10">
+			<div class="home-title">
+				<div class="home-title-name">新闻资讯<span>News</span></div>
+				<div class="home-title-more"><a href="{% url 'home:news_list' 3 %}" class="active">更多</a></div>
+			</div>
+
+			<div class="home_news">
+				{% get_sonid_all 3 %}
+                {% for_rs top="4" table="manager_modelnewsmodel" join="left join manager_contentmodel on manager_modelnewsmodel.cid=manager_contentmodel.id" where="islock=1 and classid in({{subs}}) and isnice=1" order="ontop desc,ordnum desc,id desc" %}
+				<div class="home_news_item">
+					<div class="home_news_body">
+						<div class="date">
+							<h4>{{rs.createdate|fromunix:'%d'}}</h4>
+							<p>{{rs.createdate|fromunix:'%Y-%m'}}</p>
+						</div>
+						<div class="body">
+							<h4><a href="{% url 'home:news_show' rs.cid %}" title="{{rs.title}}">{{rs.title}}</a></h4>
+						</div>
+					</div>
+				</div>
+				{% endfor_rs %}
+			</div>
+		</div>
+	</div>
+
+    <div class="ui-mwidth">
+		<div class="ui-box ui-p-10">
+			<div class="home-title">
+				<div class="home-title-name">产品展示<span>Product</span></div>
+				<div class="home-title-more"><a href="{% url 'home:pro_list' 12 %}" class="active">更多</a></div>
+			</div>
+
+			<div class="ui-piclist ui-piclist-col-2 ui-piclist-1-1 ui-piclist-100">
+				{% get_sonid_all 12 %}
+                {% for_rs top="4" table="manager_modelpromodel" join="left join manager_contentmodel on manager_modelpromodel.cid=manager_contentmodel.id" where="islock=1 and classid in({{subs}}) and isnice=1" order="ontop desc,ordnum desc,id desc" %}
+				<div class="ui-piclist-item">
+					<div class="ui-piclist-image"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}"><img src="{% thumb rs.pic 400 400 %}" alt="{{rs.title}}" /></a></div>
+					<div class="ui-piclist-body">
+						<div class="ui-piclist-title ui-text-center ui-text-hide"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}">{{rs.title}}</a></div>
+                        <div class="ui-piclist-flex">
+                            {% if rs.price %}
+                            <div class="ui-piclist-price"><strong>￥{{rs.price}}</strong></div>
+                            {% else %}
+                            <div class="ui-piclist-price"><strong>免费</strong></div>
+                            {% endif %}
+                            <div class="action"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}" style="padding:0 6px;font-size:12px;" class="ui-btn ui-btn-sm ui-btn-blue">详情</a></div>
+                        </div>
+					</div>
+				</div>
+				{% endfor_rs %}
+			</div>
+		</div>
+	</div>
+
+    <div class="ui-mwidth ui-mt">
+		<div class="ui-box ui-p-10">
+			<div class="home-title">
+				<div class="home-title-name">友情链接<span>Friend Link</span></div>
+			</div>
+
+			<div class="link">
+				{% for_rs top="0" table="manager_linkmodel" where="islogo=0 and islock=1" order="ordnum,id" %}
+				<a href="{{ rs.weburl }}" title="{{ rs.webname }}">{{ rs.webname }}</a>
+				{% endfor_rs %}
+			</div>
+		</div>
+
+	</div>
+
+    <div class="ui-mwidth copyright">
+		<div class="links"><a href="{% url 'home:tags' %}">标签</a> | <a href="{% url 'home:sitemap' %}">网站地图</a></div>
+		{{ CT_COMPANY }}　版权所有
+		<div class="ui-pt-20"></div>
+	</div>
+    {% include "home/mobile/include/foot.html" %}
+</body>
+</html>

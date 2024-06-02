@@ -1,0 +1,7 @@
+{% load manager_menu_tags %}
+{% load utils %}
+{% if menuitems_children %}
+    {% for item in menuitems_children %}
+        <li><a href="{% get_admin_menu_url item.cname item.aname item.dname %}">{{item.title}}</a></li>
+    {% endfor %}
+{% endif %}

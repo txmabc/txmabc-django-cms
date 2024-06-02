@@ -1,0 +1,36 @@
+{% load utils %}
+
+<ul class="ui-media-list ui-mt-20">
+    {% if not page_obj %}
+    没有资料
+    {% endif %}
+	{% for item in page_obj %}
+	<li class="ui-media">
+		<div class="ui-media-img ui-mr-20">
+			<a href="{{item.link}}" title="{{item.title}}">{% if item.ispic == 0 %}<svg width="100" height="90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Image cap"><rect width="100%" height="100%" fill="#fafafa" /><text x="50%" y="50%" fill="#666666" dy=".3em">暂无图片</text></svg>{% else %}<img src="{{item.pic}}" alt="{{item.title}}" width="100" />{% endif %}</a>
+		</div>
+		<div class="ui-media-body">
+			<div class="ui-media-header ui-text-hide"><a href="{{item.link}}" title="{{item.title}}">{{item.title}}</a></div>
+			<div class="ui-media-text ui-font-12 ui-text-gray ui-text-hide">{{item.intro}}</div>
+			<div class="ui-media-other ui-row"><div class="ui-col-6"><span class="ui-icon-time-circle ui-text-gray"></span> {{item.createdate|fromunix:'%Y-%m-%d'}}</div><div class="ui-col-6 ui-text-right"><span class="ui-icon-eye ui-text-gray"></span> {{item.hits}}</div></div>
+		</div>
+	</li>
+	{% endfor %}
+</ul>
+
+{%if page_obj %}
+<div class="ui-page ui-page-center ui-page-mid ui-mt-20">
+    <ul>
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">首页</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% csrf_token %}

@@ -1,0 +1,10 @@
+{% load utils %}
+<div class="artshow">
+	<h1>{{title}}</h1>
+	<div class="info">
+		<span>作者：</span>weaimy　<span>日期：</span>{{createdate|fromunix:'%m-%d'}}　<span>人气：</span>{{hits}}
+	</div>
+	<div class="content">
+		{{content|safe}}
+    </div>
+</div>

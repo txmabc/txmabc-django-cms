@@ -1,0 +1,49 @@
+{% load users_money_tags %}
+{% load utils %}
+<table class="ui-table ui-table-border ui-table-hover ui-table-striped ui-mt-20">
+    <thead class="ui-thead-gray">
+        <tr>
+            <th>名称|流水号</th>
+            <th width="100">性质</th>
+            <th width="100">变动前</th>
+            <th width="100">金额</th>
+            <th width="100">变动后</th>
+            <th width="160">日期</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if not page_obj %}
+        <tr>
+            <td colspan="6">暂无资料</td>
+        </tr>
+    {% endif %}
+    {% for item in page_obj %}
+    <tr>
+        <td class="ui-text-left">{{item.title}}</td>
+        <td>{% if item.types == 1 %} 收入 {% else %} <span class="ui-text-gray">支出</span> {% endif %}</td>
+        <td>{{item.oldmoney}}</td>
+        <td>{% if item.types == 1 %} + {% else %} <span class="ui-text-gray">-</span> {% endif %} {{item.amount}}</td>
+        <td>{{item.newmoney}}</td>
+        <td>{{item.createdate|fromunix:"%Y-%m-%d %H:%I"}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{%if page_obj %}
+    <div class="ui-page ui-page-right ui-page-info">
+        <div class="ui-page-list">
+            <ul>
+                {% if page_obj.has_previous %}
+                    <li><a href="?fid={{ fid }}&page=1">首页</a></li>
+                    <li><a href="?fid={{ fid }}&page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% endif %}
+
+                <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+            {% if page_obj.has_next %}
+                <li><a href="?fid={{ fid }}&page={{ page_obj.next_page_number }}">下一页</a></li>
+                <li><a href="?fid={{ fid }}&page={{ page_obj.paginator.num_pages }}">末页</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endif %}

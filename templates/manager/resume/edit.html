@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>编辑简历</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+
+    <script>var api_url = "/manager/upload/imagelist?type=3&multiple=1";</script>
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+    <script src="{% static '/public/admin/js/base.js' %}"></script>
+
+</head>
+
+<body>
+    <div class="position">当前位置：栏目管理 > <a href="/manager/resume/index/">简历管理</a> > <a
+            href="/manager/resume/edit/?id={{id}}">编辑简历</a></div>
+    <div class="border">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="form-subject">编辑简历</div>
+
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">申请职位：</label>
+                <div class="col-right">
+                    <input type="text" name="my_title" id="my_title" class="ui-form-ip" value="{{my_title}}"
+                        data-rule="申请职位:required;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">姓名：</label>
+                <div class="col-right">
+                    <input type="text" name="my_truename" id="my_truename" class="ui-form-ip" maxlength="20" value="{{my_truename}}"
+                        data-rule="姓名:required;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">性别：</label>
+                <div class="col-right">
+                    <select name="my_sex" id="my_sex" class="ui-form-ip" data-rule="性别:required;">
+                        <option value="">请选择性别</option>
+                        <option value="1" {% if my_sex == 1 %}selected{% endif %}>男</option>
+                        <option value="2" {% if my_sex == 2 %}selected{% endif %}>女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">年龄：</label>
+                <div class="col-right">
+                    <input type="text" name="my_age" id="my_age" class="ui-form-ip" maxlength="2" value="{{my_age}}"
+                        data-rule="年龄:required;int">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">手机：</label>
+                <div class="col-right">
+                    <input type="text" name="my_mobile" id="my_mobile" class="ui-form-ip" maxlength="11" value="{{my_mobile}}"
+                        data-rule="手机:required;mobile">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">学历：</label>
+                <div class="col-right">
+                    <select name="my_education" id="my_education" class="ui-form-ip" data-rule="学历:required;">
+                        <option value="">请选择学历</option>
+                        <option value="1" {% if my_education == 1 %} selected {% endif %}>大专</option>
+                        <option value="2" {% if my_education == 2 %} selected {% endif %}>本科</option>
+                        <option value="3" {% if my_education == 3 %} selected {% endif %}>硕士</option>
+                        <option value="4" {% if my_education == 4 %} selected {% endif %}>博士</option>
+                        <option value="5" {% if my_education == 5 %} selected {% endif %}>其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">工作经验：</label>
+                <div class="col-right">
+                    <textarea name="my_work_exp" class="ui-form-ip" id="my_work_exp" rows="3" cols="50"
+                        data-rule="工作经验:required;">{{my_work_exp}}</textarea>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">自我评价：</label>
+                <div class="col-right">
+                    <textarea name="my_intro" class="ui-form-ip" id="my_intro" rows="3" cols="50"
+                        data-rule="自我评价:required;">{{my_intro}}</textarea>
+                </div>
+            </div>
+
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">排序：</label>
+                <div class="col-right">
+                    <input type="text" name="ordnum" class="ui-form-ip" value="{{ordnum}}">
+                    <span class="input-tips">数字越大越靠前</span>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">状态：</label>
+                <div class="col-right col-right-top">
+                    <label class="ui-radio"><input type="radio" name="islock" value="1" {% if islock == 1 %}checked{% endif %}><i></i>已审</label>
+                    <label class="ui-radio"><input type="radio" name="islock" value="0" {% if islock == 0 %}checked{% endif %}><i></i>未审</label>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label"></label>
+                <div class="col-right">
+                    {% csrf_token %}
+                    <button type="submit" class="ui-btn ui-btn-info ui-mr">保存</button>
+                    <button type="button" class="ui-btn ui-back">返回</button>
+                </div>
+            </div>
+        </form>
+        <!---->
+    </div>
+    <script>
+        $(function () {
+
+            $(".ui-form").form(
+                {
+                    type: 2,
+                    result: function (form) {
+                        $.ajax(
+                            {
+                                type: 'post',
+                                cache: false,
+                                dataType: 'json',
+                                url: '/manager/resume/edit/?id={{id}}',
+                                data: $(form).serialize(),
+                                error: function (e) { alert(e.responseText); },
+                                success: function (d) {
+                                    if (d.state == 'success') {
+                                        wmcms.success(d.msg);
+                                        setTimeout(function () { location.href = '/manager/resume/index/'; }, 1500);
+                                    }
+                                    else {
+                                        wmcms.error(d.msg);
+                                    }
+                                }
+                            });
+                    }
+                });
+        })
+    </script>
+</body>
+
+</html>

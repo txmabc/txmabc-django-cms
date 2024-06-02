@@ -1,0 +1,41 @@
+{% load static %}
+{% load users_money_tags %}
+{% include "home/include/top.html" %}
+<title>财务明细</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="bookmark" href="/favicon.ico"/>
+</head>
+<body>
+{% include "home/include/head.html" %}
+{% include "home/include/banner_inner.html" %}
+<div class="container">
+    <div class="width ui-row">
+        <div class="container-left">
+            <div class="ui-fixed-s" data-parent=".container">
+                {% include "users/nav.html" %}
+            </div>
+        </div>
+        
+        <div class="container-right">
+        
+            <div class="ui-box">
+                <div class="ui-box-h2">{{catename}}</div>
+                <div class="ui-box-body">
+                    <a href="{% url 'users:pay' %}" class="ui-btn ui-btn-blue ui-mr-sm">在线充值</a>
+						<span class="ui-btn-group ui-btn-group-yellow ui-btn-group-bg">
+							<a class="ui-btn-group-item{% if type == 0 %} active{% endif %}" href="{% url 'users:mymoney' %}">全部</a>
+							<a class="ui-btn-group-item{% if type == 1 %} active{% endif %}" href="{% url 'users:mymoney' %}?type=1">收入</a>
+							<a class="ui-btn-group-item{% if type == 2 %} active{% endif %}" href="{% url 'users:mymoney' %}?type=2">支出</a>
+						</span>
+                    {% users_usermoney_lists %}
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+{% include "home/include/foot.html" %}
+</body>
+</html>

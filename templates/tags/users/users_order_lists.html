@@ -1,0 +1,51 @@
+{% load users_order_tags %}
+{% load utils %}
+<table class="ui-table ui-table-border ui-table-hover ui-table-striped">
+    <thead class="ui-thead-gray">
+        <tr>
+            <th width="120">订单号</th>
+            <th>产品名称</th>
+            <th width="70">数量</th>
+            <th width="80">金额</th>
+            <th width="80">状态</th>
+            <th width="120">下单日期</th>
+            <th width="80">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if not page_obj %}
+        <tr>
+            <td colspan="7">暂无订单</td>
+        </tr>
+    {% endif %}
+    {% for item in page_obj %}
+    <tr>
+        <td>{{item.orderid}}</td>
+        <td class="ui-text-left">{{item.pro_name}}</td>
+        <td>{{item.pro_num}}</td>
+        <td>{{item.pro_price}}</td>
+        <td>{% if item.ispay == 1 %}已支付{% else %}<em class="ui-text-gray">未支付</em>{% endif %}<br>{% if item.isover == 1 %}已处理{% else %}<em class="ui-text-gray">未处理</em>{% endif %}</td>
+        <td>{{item.createdate|fromunix:"%Y-%m-%d %H:%I"}}</td>
+        <td><a href="{% url 'home:other_ordershow' item.orderid %}" target="_blank">查看订单</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{%if page_obj %}
+    <div class="ui-page ui-page-right ui-page-info">
+        <div class="ui-page-list">
+            <ul>
+                {% if page_obj.has_previous %}
+                    <li><a href="?fid={{ fid }}&page=1">首页</a></li>
+                    <li><a href="?fid={{ fid }}&page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% endif %}
+
+                <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+            {% if page_obj.has_next %}
+                <li><a href="?fid={{ fid }}&page={{ page_obj.next_page_number }}">下一页</a></li>
+                <li><a href="?fid={{ fid }}&page={{ page_obj.paginator.num_pages }}">末页</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endif %}

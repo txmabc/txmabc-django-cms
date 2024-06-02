@@ -1,0 +1,6 @@
+{% load home_link_tags %}
+{% if link_items %}
+    {% for link in link_items %}
+        <a href="{{link.weburl}}" title="{{link.webname}}" target="_blank">{{link.webname}}</a>
+    {% endfor %}
+{% endif %}

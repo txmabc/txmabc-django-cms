@@ -1,0 +1,38 @@
+{% load static %}
+{% load users_order_tags %}
+{% include "home/include/top.html" %}
+<title>我的订单</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="bookmark" href="/favicon.ico"/>
+</head>
+<body>
+{% include "home/include/head.html" %}
+{% include "home/include/banner_inner.html" %}
+<div class="container">
+    <div class="width ui-row">
+        <div class="container-left">
+            <div class="ui-fixed-s" data-parent=".container">
+                {% include "users/nav.html" %}
+            </div>
+        </div>
+        
+        <div class="container-right">
+            <div class="ui-box">
+                <div class="ui-box-h2">{{catename}}</div>
+                <div class="ui-box-body">
+                    <div class="ui-btn-group ui-btn-group-yellow ui-btn-group-bg ui-mb-15">
+                        <a class="ui-btn-group-item{% if types == 0 %} active{% endif %}" href="{% url 'users:myorder' %}">全部</a>
+                        <a class="ui-btn-group-item{% if types == 1 %} active{% endif %}" href="{% url 'users:myorder' %}?type=1">已支付</a>
+                        <a class="ui-btn-group-item{% if types == 2 %} active{% endif %}" href="{% url 'users:myorder' %}?type=2">未支付</a>
+                    </div>
+                    {% users_order_lists %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "home/include/foot.html" %}
+</body>
+</html>

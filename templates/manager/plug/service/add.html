@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>添加客服</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static 'public/js/jquery.js' %}"></script>
+<script src="{% static 'public/js/ui.js' %}"></script>
+</head>
+<body class="bg_white">
+
+<div class="border_iframe">
+    <form class="ui-form" method="post">
+        <div class="ui-form-group ui-row">
+            <label class="ui-col-3 ui-col-form-label">客服名称：</label>
+            <div class="ui-col-9">
+                <input type="text" name="title" class="ui-form-ip" maxlength="20" placeholder="请输入客服名称" data-rule="客服名称:required;">
+            </div>
+        </div>
+        <div class="ui-form-group ui-row">
+            <label class="ui-col-3 ui-col-form-label">QQ：</label>
+            <div class="ui-col-9">
+                <input type="text" name="qq" class="ui-form-ip" maxlength="20" placeholder="请输入QQ" data-rule="QQ:required;">
+            </div>
+        </div>
+        <div class="ui-form-group ui-row">
+            <label class="ui-col-3 ui-col-form-label">排序：</label>
+            <div class="ui-col-9">
+                <input type="text" name="ordnum" class="ui-form-ip" value="0">
+                <span class="input-tips">数字越小越靠前</span>
+            </div>
+        </div>
+        <div class="ui-form-group ui-row">
+            <label class="ui-col-3 ui-col-form-label">状态：</label>
+            <div class="ui-col-9 col-right-top">
+                <label class="ui-radio"><input type="radio" name="islock" value="1" checked><i></i>启用</label>
+                <label class="ui-radio"><input type="radio" name="islock" value="0"><i></i>锁定</label>
+            </div>
+        </div>
+        <div class="ui-form-group ui-hide">
+        	{% csrf_token %}
+            <button type="submit" id="wmcms-submit">保存</button>
+        </div>
+    </form>
+</div>
+
+<script>
+$(function()
+{
+	var backurl=window.parent.location;
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'bottom-center',
+		result:function(form)
+		{
+			$.ajax(
+			{
+				type:'post',
+				cache:false,
+				dataType:'json',
+				url:'{% url "manager:plugservice_add" %}',
+				data:$(form).serialize(),
+				error:function(e){alert(e.responseText);},
+				success:function(d)
+				{
+					if(d.state=='success')
+					{
+						wmcms.success(d.msg);
+						setTimeout(function(){parent.location.href=backurl;},1000);
+					}
+					else
+					{
+						wmcms.error(d.msg);
+					}  
+				}
+			});
+		}
+	});
+})
+</script>
+</body>
+</html>

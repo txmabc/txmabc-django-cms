@@ -1,0 +1,52 @@
+{% load utils %}
+<div class="ui-row ui-mt-15 ui-mb">
+    <div class="filelist-left">
+        <ul>
+            <li{% if gid == 0 %} class="actice"{% endif %}><a href="/manager/upload/imagelist/?multiple={{multiple}}&type={{type}}&iseditor={{iseditor}}&islocal={{islocal}}&gid=0&thumb={{thumb}}&water={{water}}"><span>{{total}}</span>未分组</a></li>
+            {% for rs in attachment_group_list %}
+                <li{% if gid == rs.aid %} class="actice"{% endif %}><a href="/manager/upload/imagelist/?multiple={{multiple}}&type={{type}}&iseditor={{iseditor}}&islocal={{islocal}}&gid={{rs.aid}}&thumb={{thumb}}&water={{water}}"><span>{{rs.num}}</span>{{rs.gname}}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="filelist-right">
+        <!---->
+         <div class="ui-piclist ui-piclist-4-3 ui-piclist-col-right" id="list">
+            <div id="list_pre"></div>
+            {% if not page_obj %}
+                <div class="ui-pt ui-pl ui-font-14 nothing">暂无文件</div>
+            {% else %}
+                {% for rs in page_obj %}
+                    <div class="ui-piclist-item" data-url="{{rs.file_url}}" title="{{ rs.file_name }}">
+                        <div class="ui-piclist-image{% if rs.file_type > 1 %} file-preview file-type-{{rs.file_ext|strip:'.'}}{% endif %}">
+                        {% if rs.file_type == 1 %}
+                            <a><img src="{{ rs.file_url}}" /></a>
+                        {% else %}
+                            <a></a>
+                        {% endif %}
+                        </div>
+                        <div class="ui-piclist-body">
+                            <div class="ui-piclist-title ui-text-hide">{{ rs.file_name }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <!---->
+    </div>
+</div>	
+
+<div class="ui-page ui-page-center ui-page-info ui-mt">
+    <ul>
+        {% if page_obj.has_previous %}
+            <li><a href="?gid={{ gid }}&page=1">首页</a></li>
+            <li><a href="?gid={{ gid }}&page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?gid={{ gid }}&page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a href="?gid={{ gid }}&page={{ page_obj.paginator.num_pages }}">末页</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+	

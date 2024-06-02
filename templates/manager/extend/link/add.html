@@ -1,0 +1,158 @@
+{% load static %}
+{% load utils %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>添加链接</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script>var api_url = "/manager/upload/imagelist/?type=3&multiple=1";</script>
+    <script src="{% static 'public/js/jquery.js' %}"></script>
+    <script src="{% static 'public/js/ui.js' %}"></script>
+    <script src="{% static 'public/js/dropzone.js' %}"></script>
+    <script src="{% static 'public/admin/js/base.js' %}"></script>
+</head>
+
+<body>
+
+<body class="bg_white">
+	
+    <div class="border_iframe">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">网站名称：</label>
+                <div class="ui-col-9">
+                    <input type="text" name="webname" class="ui-form-ip" placeholder="请输入网站名称" data-rule="网站名称:required;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row{% if LINK_LOGO == 0 %} dis{% endif %}">
+                <label class="ui-col-3 ui-col-form-label">网站Logo：</label>
+                <div class="ui-col-9">
+                    <div class="ui-input-group">
+                        <input type="text" name="weblogo" id="weblogo" class="ui-form-ip radius-right-none">
+                        <a class="after dropzone ui-icon-cloud-upload radius-none" config="weblogo" url="/manager/upload/upfile?type=1&mode=1" maxsize="{C('upload_image_max')}" data-thumb="0" title="上传">上传</a>
+                        <a class="after ui-lightbox ui-icon-zoomin" data-id="weblogo" data-name="lightbox-pic" title="网站Logo">预览</a>
+                    </div>
+                    <span class="input-tips"></span>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">网址：</label>
+                <div class="ui-col-9">
+                    <input type="text" name="weburl" class="ui-form-ip" placeholder="请输入网址" data-rule="网址:required;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row {% if LINK_CLASS == 0 %} dis{% endif %}">
+                <label class="ui-col-3 ui-col-form-label">类别：</label>
+                <div class="ui-col-9">
+                    <select name="classid" class="ui-form-ip">
+                    	<option value="0" >不分类</option>
+                        {% if LINK_CLASS_DATA %}
+                            {% for item in LINK_CLASS_DATA|split:',' %}
+                                {% with item|split:'|' as data %}
+                                <option value="{{data.1}}">{{data.0}}</option>
+                                {% endwith %}
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">排序：</label>
+                <div class="ui-col-9">
+                    <input type="text" name="ordnum" class="ui-form-ip" value="0">
+                    <span class="input-tips">数字越小越靠前</span>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">状态：</label>
+                <div class="ui-col-9 col-right-top">
+                    <label class="ui-radio"><input type="radio" name="islock" value="1" checked><i></i>启用</label>
+                    <label class="ui-radio"><input type="radio" name="islock" value="0"><i></i>锁定</label>
+                </div>
+            </div>
+            <div class="ui-form-group ui-hide">
+                {% csrf_token %}
+                <button type="submit" id="wmcms-submit">保存</button>
+            </div>
+        </form>
+        <!---->
+    </div>
+<script>
+$(function()
+{
+	var backurl=window.parent.location;
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'bottom-center',
+		result:function(form)
+		{
+			$.ajax(
+			{
+				type:'post',
+				cache:false,
+				dataType:'json',
+				url:'{% url "manager:link_add" %}',
+				data:$(form).serialize(),
+				error:function(e){alert(e.responseText);},
+				success:function(d)
+				{
+					if(d.state=='success')
+					{
+						wmcms.success(d.msg);
+						setTimeout(function(){parent.location.href=backurl;},1000);
+					}
+					else
+					{
+						wmcms.error(d.msg);
+					}  
+				}
+			});
+		}
+	});
+})
+$(".dropzone").dropzone(
+{
+	maxFiles:1,
+	acceptedFiles:".jpg,.gif,.png",
+	success:function(file,data,that)
+	{
+		data=jQuery.parseJSON(data);
+        this.removeFile(file);
+		if(data.state=="success")
+		{
+			wmcms.success("上传成功");
+			$("#"+$(that).attr("config")).val(data.msg);
+		}
+		else
+		{
+			wmcms.error("上传失败："+data.msg);
+		}
+	},
+	sending:function(file)
+	{
+		wmcms.loading("正在上传，请稍等");
+	},
+	totaluploadprogress:function(progress)
+	{
+		$.progress((Math.round(progress*100)/100)+"%");
+	},
+	queuecomplete:function(progress)
+	{
+		$.progress('close');
+	},
+	error:function(file,msg)
+	{
+		wmcms.error(msg);
+	}
+});
+</script>
+</body>
+</html>

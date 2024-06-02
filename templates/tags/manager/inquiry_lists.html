@@ -1,0 +1,57 @@
+{% load manager_inquiry_tags %}
+{% load utils %}
+    <div class="ui-table-wrap">
+        <table class="ui-table ui-table-border ui-table-hover ui-table-striped ui-mb">
+            <thead class="ui-thead-gray">
+                <tr>
+                    <th width="30" height="30"><label class="ui-checkbox tips" data-align="right-top" data-title="全选/取消"><input type="checkbox" class="checkall" value=""><i></i></label></th>
+                    <th width="60">ID</th>
+                    <th>询价产品</th>
+                    <th width="100">姓名</th>
+                    <th width="120">手机</th>
+                    <th width="160">提交日期</th>
+                    <th width="80">状态</th>
+                    <th width="150">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not page_obj %}
+                <tr>
+                    <td colspan="8">暂无数据</td>
+                </tr>
+                {% endif %}
+                {% for item in page_obj %}
+                <tr>
+                    <td>
+                        <label class="ui-checkbox"><input type="checkbox" name="id" value="{{item.id}}"><i></i></label>
+                    </td>
+                    <td>{{item.id}}</td>
+                    <td class="ui-text-left">{{item.title}}</td>
+                    <td>{{item.truename}}</td>
+                    <td>{{item.mobile}}</td>
+                    <td>{{item.createdate|fromunix:"%Y-%m-%d %H:%I"}}</td>
+                    <td><label class="ui-switch ui-switch-info"><input type="checkbox" {% if item.isover == 1 %} checked{% endif %} data-url="{% url 'manager:inquiry_switchs' %}?id={{item.id}}"><span class="ui-switch-checkbox ui-switch-text"></span></label></td>
+                    <td><a href="javascript:;" data-url="{% url 'manager:inquiry_edit' item.id %}" class="edit-iframe">查看</a>　<a href="javascript:;" class="del" data-url="{% url 'manager:inquiry_del' item.id %}">删除</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {%if page_obj %}
+    <div class="ui-page ui-page-right ui-page-info">
+        <div class="ui-page-list">
+            <ul>
+                {% if page_obj.has_previous %}
+                    <li><a href="?fid={{ fid }}&page=1">首页</a></li>
+                    <li><a href="?fid={{ fid }}&page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% endif %}
+
+                <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+            {% if page_obj.has_next %}
+                <li><a href="?fid={{ fid }}&page={{ page_obj.next_page_number }}">下一页</a></li>
+                <li><a href="?fid={{ fid }}&page={{ page_obj.paginator.num_pages }}">末页</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}

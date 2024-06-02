@@ -1,0 +1,37 @@
+{% load static %}
+{% include "home/include/top.html" %}
+<title>{{ catename }}</title>
+<meta name="keywords" content="{{ webconfig.seo_key }}">
+<meta name="description" content="{{ webconfig.seo_desc }}">
+<link rel="shortcut icon" href="{% static '/favicon.ico' %}"/>
+<link rel="bookmark" href="{% static '/favicon.ico' %}"/>
+</head>
+<body>
+{% include "home/include/head.html" %}
+{% include "home/include/banner_inner.html" %}
+<div class="container">
+    <div class="width ui-row">
+        <div class="container-left">
+            <div class="ui-fixed-s" data-parent=".container">
+                {% include "home/include/left_nav.html" %}
+            </div>
+        </div>
+        
+        <div class="container-right">
+        
+            <div class="ui-box">
+                <div class="ui-box-h2">{{catename}}</div>
+                <div class="ui-box-body">
+                    <!---->
+                    {% include "home/include/content/filter.html" %}
+                    {% include "home/include/content/news/list.html" %}
+                    <!---->
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+{% include "home/include/foot.html" %}
+</body>
+</html>

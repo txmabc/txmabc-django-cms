@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>编辑留言</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+
+<body class="bg_white">
+    <div class="border_iframe">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">姓名：</label>
+                <div class="ui-col-9">
+                    <input type="text" name="truename" class="ui-form-ip" value="{{truename}}" data-rule="姓名:required;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">电话：</label>
+                <div class="ui-col-9">
+                    <input type="text" name="tel" class="ui-form-ip" value="{{tel}}">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">手机：</label>
+                <div class="ui-col-9">
+                    <input type="text" name="mobile" class="ui-form-ip" value="{{mobile}}">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">留言内容：</label>
+                <div class="ui-col-9">
+                    <textarea name="remark" class="ui-form-ip" rows="4" cols="50" data-rule="留言内容:required;">{{remark}}</textarea>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">回复内容：</label>
+                <div class="ui-col-9">
+                    <textarea name="reply" class="ui-form-ip" rows="4" cols="50">{{reply}}</textarea>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">是否置顶：</label>
+                <div class="ui-col-9 col-right-top">
+                    <label class="ui-radio"><input type="radio" name="ontop" value="1"{% if ontop == 1 %} checked{% endif %}><i></i>是</label>
+                    <label class="ui-radio"><input type="radio" name="ontop" value="0"{% if ontop == 0 %} checked{% endif %}><i></i>否</label>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">状态：</label>
+                <div class="ui-col-9 col-right-top">
+                    <label class="ui-radio"><input type="radio" name="islock" value="1"{% if islock == 1 %} checked{% endif %}><i></i>已审</label>
+                    <label class="ui-radio"><input type="radio" name="islock" value="0"{% if islock == 0 %} checked{% endif %}><i></i>未审</label>
+                </div >
+            </div>
+            <div class="ui-form-group ui-hide">
+                {% csrf_token %}
+                <button type="submit" id="wmcms-submit">保存</button>
+            </div>
+        </form>
+        <!---->
+    </div>
+
+<script>
+$(function()
+{
+	var backurl=window.parent.location;
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'bottom-center',
+		result:function(form)
+		{
+			$.ajax(
+			{
+				type:'post',
+				cache:false,
+				dataType:'json',
+				url:'{% url "manager:book_edit" id %}',
+				data:$(form).serialize(),
+				error:function(e){alert(e.responseText);},
+				success:function(d)
+				{
+					if(d.state=='success')
+					{
+						wmcms.success(d.msg);
+						setTimeout(function(){parent.location.href=backurl;},1000);
+					}
+					else
+					{
+						wmcms.error(d.msg);
+					}  
+				}
+			});
+		}
+	});
+})
+</script>
+</body>
+</html>

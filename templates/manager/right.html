@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>管理首页</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+<script src="{% static '/public/scroll/jquery.slimscroll.js' %}"></script>
+</head>
+
+<body>
+    <div class="position">当前位置：<a href="{% url 'manager:index' %}">管理首页</a></div>
+    
+    <div class="home">
+        <div class="count">
+            <a class="box" href="{% url 'manager:user_index' %}">
+                <h3>会员</h3>
+                <div class="num">{{ data.user.total }}</div>
+                <div class="total">待处理：<span class="red">{{ data.user.num }}</span></div>
+                <div class="icon icon-1"><span class="ui-icon-file-word"></span></div>
+            </a>
+            
+            <a class="box" href="{% url 'manager:order_index' %}">
+                <h3>订单</h3>
+                <div class="num">{{ data.order.total }}</div>
+                <div class="total">待处理：<span class="red">{{ data.order.num }}</span></div>
+                <div class="icon icon-2"><span class="ui-icon-linechart"></span></div>
+            </a>
+            
+            <a class="box" href="{% url 'manager:inquiry_index' %}">
+                <h3>询价</h3>
+                <div class="num">{{ data.inquiry.total }}</div>
+                <div class="total">待处理：<span class="red">{{ data.inquiry.num }}</span></div>
+                <div class="icon icon-3"><span class="ui-icon-evaluate"></span></div>
+            </a>
+            
+            <a class="box" href="{% url 'manager:book_index' %}">
+                <h3>留言</h3>
+                <div class="num">{{ data.book.total }}</div>
+                <div class="total">待处理：<span class="red">{{ data.book.num }}</span></div>
+                <div class="icon icon-4"><span class="ui-icon-comment"></span></div>
+            </a>
+        </div>            
+    </div>
+
+    <div class="foottop"></div>
+    <div class="copyright"><span>当前版本：Powered By <a href="{% url 'home:index' %}" target="_blank">Weaimy.Com</a> @ 2008-07 Inc.</div>
+</body>
+</html>

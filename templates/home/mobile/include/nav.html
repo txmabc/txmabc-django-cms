@@ -1,0 +1,19 @@
+
+{% load static %}
+{% load home_navigation_tags %}
+
+<div class="ui-offside ui-offside-left" id="ui-offside-nav">
+	
+	<form action="{% url 'home:search' %}" method="post" onSubmit="return checksearch(this)">
+		<div class="ui-form-group">
+			<div class="ui-input-group">
+                {% csrf_token %}
+				<input type="text" name="keyword" class="ui-form-ip radius-right-none" placeholder="请输入关键字">
+				<button type="submit" class="after"><div class="ui-icon-search"></div></button>
+			</div>
+		</div>
+	</form>
+	
+	<div class="ui-collapse-menu-title"><a href="/" title="网站首页">网站首页</a></div>
+	{% home_mobile_top_menu %}
+</div>

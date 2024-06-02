@@ -1,0 +1,306 @@
+{% load static %}
+{% load manager_category_tags %}
+{% load manager_content_tags %}
+{% load utils %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>内容管理</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+
+<body>
+    <div class="position">当前位置：<a href="/manager/content/lists">内容管理</a>{% if classid > 0 %}{{classid|get_page_postion|safe}}{% endif %}</div>
+    <div class="border">
+        <!---->
+        <div class="navbar">
+            <div class="lefter">
+                {% if classid > 0 %}
+                <a href="{{ classid|get_cate_add_url }}" class="ui-btn ui-btn-info ui-mr-sm">添加内容</a>
+                {% endif %}
+                
+                <a href="javascript:;" class="ui-btn ui-btn-info ui-dropdown-show ui-mr-sm" data-target="#dropdown-1">批量操作</a>
+                <div class="ui-dropdown" id="dropdown-1">
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="1">设为发布</a>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="2">设为草稿</a>
+                    <div class="ui-dropdown-line"></div>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="3">设为推荐</a>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="4">取消推荐</a>
+                    <div class="ui-dropdown-line"></div>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="5">设为置顶</a>
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="6">取消置顶</a>
+                    <div class="ui-dropdown-line"></div>
+                    {% if classid > 0 %}<a href="javascript:;" class="ui-dropdown-item move">批量移动</a>{% endif %}
+                    <a href="javascript:;" class="ui-dropdown-item btach" type="7">放入回收站</a>
+                </div>
+                <span class="ui-btn-group ui-btn-group-yellow ui-btn-group-bg">
+                    <a class="ui-btn-group-item{% if type == 0 %} active{% endif %}" href="/manager/content/lists/?classid={{classid}}&type=0">全部</a>
+                    <a class="ui-btn-group-item{% if type == 1 %} active{% endif %}" href="/manager/content/lists/?classid={{classid}}&type=1">草稿</a>
+                    <a class="ui-btn-group-item{% if type == 2 %} active{% endif %}" href="/manager/content/lists/?classid={{classid}}&type=2">已发</a>
+                </span>
+            </div>
+            
+            <div class="righter">
+                <form action="/manager/content/lists?classid={{ classid }}">
+                    <div class="ui-form-group">
+                        <div class="ui-input-group">
+                            <input type="text" name="keyword" class="ui-form-ip radius-right-none" value="{{keyword}}" placeholder="请输入关键字">
+                            <button type="submit" class="after"><div class="ui-icon-search"></div></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+            
+        <form method="post" class="ui-form">
+        {% manager_content_list %}
+        {% csrf_token %}
+        </form>
+        <!---->
+    </div>
+<script>
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+$(function()
+{
+	$('.ui-switch input[type=checkbox]').on('click',function()
+	{
+		var url=$(this).attr("data-url");
+		var result=($(this).is(':checked'))?1:0;
+		$.ajax(
+		{
+			url:url,
+			type:"post",
+			dataType:'json',
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+			data:"state="+result,
+			error:function(e){alert(e.responseText);},
+			success:function(d)
+			{
+				if(d.state=='success')
+				{
+					wmcms.success(d.msg);
+				}
+				else
+				{
+					wmcms.error(d.msg);
+				}
+			}
+		});
+	});
+	$(".btach").click(function()
+	{
+		var type=$(this).attr("type");
+		var data=[];
+		$(".ui-form").find("input[type=checkbox]:checked").each(function()
+		{
+			if($(this).attr("class")!='checkall' && !$(this).closest("label").hasClass("ui-switch"))
+			{
+				data.push($(this).val());
+			}
+		});
+        if(data.length==0)
+        {
+            wmcms.error('至少选择一条内容');
+        }
+        else
+        {
+            $.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'/manager/content/btach/',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin', 
+                data:'id='+data.join(",")+'&type='+type,
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+				{
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='/manager/content/lists/?classid={{classid}}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+        }
+    });
+	
+    $(".move").click(function()
+	{
+        var type=$(this).attr("type");
+		var data=[];
+		$(".ui-form").find("input[type=checkbox]:checked").each(function()
+		{
+			if($(this).attr("class")!='checkall' && !$(this).closest("label").hasClass("ui-switch"))
+			{
+				data.push($(this).val());
+			}
+		});
+        if(data.length==0)
+        {
+            wmcms.error('至少选择一条内容');
+        }
+        else
+        {
+			var list=data.join(",");
+			$.dialogbox(
+			{
+				'title':"批量移动",
+				'text':'/manager/content/tree/?classid={{classid}}',
+				'width':'500px',
+				'height':'370px',
+				'type':3,
+				'oktheme':'ui-btn-info',
+				'ok':function(e)
+				{
+					var t0=e.iframe().contents().find("#go").val();
+					if(t0=='')
+                    {
+                        wmcms.error('请选择目标栏目');
+                        return false;
+                    }
+					$.ajax(
+					{
+                        type:'post',
+                        url:'/manager/content/move/',
+                        dataType:'json',
+                        headers: {'X-CSRFToken': csrftoken},
+                        mode: 'same-origin', 
+                        data:'id='+list+'&go='+t0,
+                        error:function(e){alert(e.responseText);},
+                        success:function(d)
+						{
+                            if(d.state=='success')
+                            {
+								e.close();
+                                wmcms.success(d.msg);
+                                setTimeout(function(){location.href='/manager/content/lists/?classid={{classid}}';},1000);
+                            }
+                            else
+                            {
+                                wmcms.error(d.msg);
+                            }
+                        }
+                    });
+				}
+			});
+        }
+    });
+	
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'/manager/order?classid={{classid}}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='/manager/content/lists/?classid={{classid}}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+	
+	$(".copy").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要复制此内容？",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					data:'token={$token}',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='{THIS_LOCAL}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+	
+	$(".del").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要放入回收站？",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					headers: {'X-CSRFToken': csrftoken},
+                    mode: 'same-origin', 
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='/manager/content/lists/?classid={{classid}}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+})
+</script>
+</body>
+</html>

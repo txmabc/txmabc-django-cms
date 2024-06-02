@@ -1,0 +1,152 @@
+{% load static %}
+{% load utils %}
+
+{% include "home/include/top.html" %}
+
+<title>{{tagname}}_{{WEB_NAME}}</title>
+<meta name="keywords" content="{{SEO_KEY}}">
+<meta name="description" content="{{SEO_DESC}}">
+</head>
+
+<body>
+    {% include "home/include/head.html" %}
+
+	{% include "home/include/banner_inner.html" %}
+
+	<div class="container">
+		<div class="width ui-row">
+			<div class="container-left">
+				<div class="ui-fixed-s" data-parent=".container">
+					{% include "home/include/left_nav.html" %}
+				</div>
+			</div>
+			
+			<div class="container-right">
+			
+				<div class="ui-box">
+					<div class="ui-box-h2">{{catename}}</div>
+					<div class="ui-box-body">
+						<!--begin-->
+						<div class="order-base">
+							<div class="order-base-left">
+								<h1><i class="ui-icon-check-circle"></i>{% if not ispay %}订单提交成功{% else %}订单付款成功{% endif %}</h1>
+								<p><span>订单号：</span>{{ orderid }}</p>
+							</div>
+							<div class="order-base-right">
+								订单金额：<em>{{ pro_price }}</em> 元
+							</div>
+						</div>
+						
+						<div class="order-goods">
+							<div class="ui-collapse-menu-title active" data-type="1">
+								<a href="javascript:;"><span class="ui-icon-square"></span>订单明细</a><i class="ui-icon-right"></i>
+							</div>
+							<div class="ui-collapse-menu-body show">
+								<ul>
+									<li><span>产品：</span>{{ pro_name }}</li>
+									<li><span>数量：</span>{{ pro_num }}</li>
+									<li><span>姓名：</span>{{ truename }}</li>
+									<li><span>手机：</span>{{ mobile }}</li>
+									<li><span>地址：</span>{{ address }}</li>
+									<li><span>备注：</span>{{ remark }}</li>
+								</ul>
+							</div>
+						</div>
+						
+						{% if not ispay %}
+						<div class="order-pay">
+							<div class="ui-menu ui-menu-blue">
+								<div class="ui-menu-name">付款方式</div>
+							</div>
+							<form method="post" id="form_order">
+								<ul class="pay ui-mt-20" id="orderpay">
+									{% if umoney >= pro_price %}
+									<li><div><img src="{% static 'api/images/pay/user.png' %}" data-config="user"><i class="ui-icon-check"></i></div></li>
+									{% endif %}
+									{% if PAY_ALIPAY_OPEN %}
+									<li><div><img src="{% static 'api/images/pay/alipay.png' %}" data-config="alipay"><i class="ui-icon-check"></i></div></li>
+									{% endif %}
+									{% if PAY_WXPAY_OPEN %}
+									<li><div><img src="{% static 'aapi/images/pay/wxpay.png' %}" data-config="wxpay"><i class="ui-icon-check"></i></div></li>
+									{% endif %}
+								</ul>
+								<input type="hidden" name="payway" id="payway" value="" data-rule="支付方式:required;">
+                                {% csrf_token %}
+								<button type="submit" class="ui-btn ui-btn-blue ui-btn-big ui-mt-20">在线支付</button>
+							</form>
+						</div>
+						{% endif %}
+						<!--over-->
+					</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+
+    {% include "home/include/foot.html" %}
+	{% if not ispay %}
+    <script src="{% static 'public/js/jquery.qrcode.js' %}"></script>  
+    <script>
+	const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	function freshorder(orderId)
+	{
+		var interval=setInterval(function()
+		{
+			$.ajax(
+			{
+				type:"post",
+				cache:"false",
+				url:"{% url 'home:other_ordershow' orderid %}",
+				success:function(d)
+				{
+					if(d=='1')
+					{
+						location.href='{% url "home:other_ordershow" orderid %}';
+					}
+				}
+			})
+		},1000);
+	};
+	$(function()
+	{
+		$("#form_order").form(
+		{
+			type:2,
+			hide:2,
+			align:'center',
+			result:function(form)
+			{
+				var payway=$("#payway").val();
+				if(payway=='user')
+				{
+					$.ajax(
+					{
+						type:'post',
+						dataType:'json',
+						url:'{% url "home:other_orderpay" orderid %}',
+						headers: {'X-CSRFToken': csrftoken},
+                    	mode: 'same-origin',
+						error:function(e){alert(e.responseText);},
+						success:function(d)
+						{
+							if(d.state=='success')
+							{
+								wmcms.success(d.msg);
+								setTimeout(function(){location.href="{% url 'home:other_ordershow' orderid %}";},1500)
+							}
+							else
+							{
+								wmcms.error(d.msg);
+							}
+						}
+					});
+					return;
+				}
+			}
+		});
+	});
+	</script>
+    {% endif %}
+</body>
+</html>

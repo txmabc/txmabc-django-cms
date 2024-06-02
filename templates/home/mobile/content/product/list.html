@@ -1,0 +1,33 @@
+{% load static %}
+{% load utils %}
+{% include "home/mobile/include/top.html" %}
+<title>{{ catename }}</title>
+<meta name="keywords" content="{{ webconfig.seo_key }}">
+<meta name="description" content="{{ webconfig.seo_desc }}">
+<link rel="shortcut icon" href="{% static '/favicon.ico' %}"/>
+<link rel="bookmark" href="{% static '/favicon.ico' %}"/>
+{% include "home/mobile/include/wxshare.html" %}
+</head>
+
+<body>
+	{% include "home/mobile/include/head.html" %}
+
+	<div class="ui-mwidth">
+		<div class="ui-box ui-p-10">
+            {% include "home/mobile/include/content/category.html" %}
+            {% include "home/mobile/include/content/filter.html" %}
+			{% include "home/mobile/include/content/pro/list.html" %}
+			<div class="ui-pt-20 ui-bg-white"></div>
+			
+		</div>
+		
+	</div>
+    {% include "home/mobile/include/foot.html" %}
+	<script>
+	$(function()
+	{
+		$(".ui-topbar-title").html("{{ topid|get_catename }}");
+	})
+	</script>
+</body>
+</html>

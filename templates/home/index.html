@@ -1,0 +1,109 @@
+{% load static %}
+{% load utils %}
+{% include "home/include/top.html" %}
+<title>{{ SEO_TITLE }}</title>
+<meta name="keywords" content="{{ SEO_KEY }}">
+<meta name="description" content="{{ SEO_DESC }}">
+<link rel="shortcut icon" href="{% static '/favicon.ico' %}"/>
+<link rel="bookmark" href="{% static '/favicon.ico' %}"/>
+</head>
+<body>
+{% include "home/include/head.html" %}
+{% block body %}
+    <!--Banner部分开始-->
+	<div class="ui-carousel banner">
+        <div class="ui-carousel-inner">
+            {% for advert in advert_list %}
+            <div class="ui-carousel-item active"><a href="" title=""><img src="{{ advert.image }}" alt=""></a></div>
+            {% endfor %}
+        </div>
+    </div>
+	<!--Banner部分结束-->
+
+    <div class="biz-warp">
+    	<div class="biz-news">
+            <i class="ui-icon-voice-big"></i>
+            <div class="ui-scroll" data-ul="ul" data-li="li" data-line="1" data-max="4" data-time="8" data-align="left">
+            	<ul>
+                    {% for item in banner_news_list %}
+                    <li><a href="{% url 'home:news_show' item.id %}" title="">{{item.title}}<span>[ {{item.createdate|fromunix:"%Y-%m-%d"}} ]</span></a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="width ui-mt-20 ui-mb-40">
+		<div class="home-title">
+            
+			<div class="home-title-name">产品展示<span>Products</span></div>
+			<div class="home-title-more">
+                <a href="{% url 'home:pro_list' 12 %}" class="active">全部</a>
+                {% for_rs top="8" table="manager_categorymodel" where="followid=12" order="catenum,cateid" %}
+                <a href="{% url 'home:pro_list' rs.cateid %}" title="{{rs.catename}}">{{rs.catename}}</a>
+                {% endfor_rs %}
+            </div>
+		</div>
+		
+		<div class="ui-piclist ui-piclist-col-4 ui-piclist-3-2 ui-piclist-100">
+            {% get_sonid_all 12 %}
+			{% for_rs top="4" table="manager_modelpromodel" join="left join manager_contentmodel on manager_modelpromodel.cid=manager_contentmodel.id" where="islock=1 and classid in({{subs}}) and isnice=1" order="ontop desc,ordnum desc,id desc" %}
+            <div class="ui-piclist-item">
+				<div class="ui-piclist-image"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}"><img src="{% thumb rs.pic 400 400 %}" alt="{{rs.title}}" /></a></div>
+				<div class="ui-piclist-body">
+                    <div class="ui-piclist-flex">
+                        <div class="ui-piclist-title ui-text-center ui-text-hide"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}">{{rs.title}}</a></div>
+                        {% if rs.price %}
+                        <div class="ui-piclist-price"><strong>￥{{rs.price}}</strong></div>
+                        {% else %}
+                        <div class="ui-piclist-price"><strong>免费</strong></div>
+                        {% endif %}
+                    </div>
+				</div>
+			</div>
+			{% endfor_rs %}
+		</div>
+	</div>
+    
+    <div class="width ui-mt-20 ui-mb-40">
+		<div class="home-title">
+			<div class="home-title-name">新闻资讯<span>News</span></div>
+            <div class="home-title-more">
+                <a href="{% url 'home:news_list' 3 %}" class="active">全部</a>
+                {% for_rs top="8" table="manager_categorymodel" where="followid=3" order="catenum,cateid" %}
+                <a href="{% url 'home:news_list' rs.cateid %}" title="{{rs.catename}}">{{rs.catename}}</a>
+                {% endfor_rs %}
+            </div>
+		</div>
+		
+		<!--news begin-->
+		<div class="home_news">
+            {% get_sonid_all 3 %}
+            {% for_rs top="4" table="manager_modelnewsmodel" join="left join manager_contentmodel on manager_modelnewsmodel.cid=manager_contentmodel.id" where="islock=1 and classid in({{subs}}) and isnice=1" order="ontop desc,ordnum desc,id desc" %}
+			<div class="home_news_item">
+				<div class="ui-card" style="display: flex;">
+                    {% if rs.ispic %}
+                    <div class="ui-card-image">
+                        <img src="{{rs.pic}}" width="218" height="156.5" alt="{{rs.title}}">
+                    </div>
+                    {% else %}              
+                    <div class="ui-card-image"><svg width="218" height="100%" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Home news"><title>Placeholder - 域名未授权</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Home news</text></svg></div>
+                    {% endif %}
+                    <div class="ui-card-body">
+                        <div class="ui-card-title">
+                            <a href="{% url 'home:news_show' rs.id %}">{{rs.title}}</a>
+                        </div>
+                        <p class="ui-card-text">{{rs.intro|slice:"50"}}</p>
+                    </div>
+                </div>
+			</div>
+			{% endfor_rs %}
+		</div>
+		<!--news over-->
+
+	</div>
+{% endblock %}
+{% include "home/include/foot.html" %}
+</body>
+</html>

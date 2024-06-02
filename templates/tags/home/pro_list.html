@@ -1,0 +1,42 @@
+{% load home_content_tags %}
+{% load utils %}
+
+<div class="ui-piclist ui-piclist-col-3 ui-piclist-3-2 ui-piclist-100">
+    {% if not page_obj %}
+        <div class="ui-font-14">没有资料</div>
+    {% endif %}
+    {% if page_obj %}
+        {% for item in page_obj %}
+            <div class="ui-piclist-item">
+                <div class="ui-piclist-image"><a href="{{item.link}}" title="{{item.title}}" target="_blank">{% if item.ispic == 0 %}<svg width="100%" height="140" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Image cap"><rect width="100%" height="100%" fill="#fafafa" /><text x="50%" y="50%" fill="#666666" dy=".3em">暂无图片</text></svg>{% else %}<img src="{{item.pic}}" alt="{{item.title}}" />{% endif %}</a></div>
+                <div class="ui-piclist-body">
+                    <div class="ui-piclist-title ui-text-center ui-text-hide"><a href="{{item.link}}" title="{{item.title}}" target="_blank">{{item.title}}</a></div>
+                    <div class="ui-piclist-flex">
+                        {% if item.price %}
+                        <div class="ui-piclist-price"><strong>￥{{item.price}}</strong></div>
+                        {% else %}
+                        <div class="ui-piclist-price"><strong>免费</strong></div>
+                        {% endif %}
+                        <div class="action"><a href="{{item.link}}" title="{{item.title}}" class="ui-btn ui-btn-blue">详情</a></div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{%if page_obj %}
+<div class="ui-page ui-page-center ui-page-mid ui-mt-20">
+    <ul>
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">首页</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% csrf_token %}

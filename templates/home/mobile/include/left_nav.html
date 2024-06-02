@@ -1,0 +1,17 @@
+{% load home_navigation_tags %}
+{% load utils %}
+
+<div class="ui-box ui-box-radius">
+{% if topid %}
+    <div class="ui-box-title">{% get_cate_info topid 'catename' %}</div>
+    <div class="ui-box-nav ui-collapse-menu">
+        {% home_left_nav topid %}
+    </div>
+{% else %}
+    <div class="ui-box-title">{% get_cate_info 1 'catename' %}</div>
+    <div class="ui-box-nav ui-collapse-menu">
+        {% home_left_nav 1 %}
+    </div>
+{% endif %}
+</div>
+

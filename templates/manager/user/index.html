@@ -1,0 +1,276 @@
+{% load static %}
+{% load utils %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>会员管理</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+
+<body>
+    <div class="position">当前位置：会员管理 > <a href="{% url 'manager:user_index' %}">会员管理</a></div>
+    <div class="border">
+        <!---->
+        <div class="navbar">
+            <div class="lefter">
+                <a href="javascript:;" data-url="{% url 'manager:user_add' %}" class="add-iframe ui-btn ui-btn-info ui-mr-sm">添加会员</a>
+                
+                <a href="javascript:;" class="ui-btn ui-btn-info ui-dropdown-show ui-mr-sm" data-target="#dropdown-1">按会员组查看</a>
+                <div class="ui-dropdown" id="dropdown-1">
+                    {% for item in groupitems %}
+                    <a href="{% url 'manager:user_index' uid=item.gid %}" class="ui-dropdown-item">{{item.gname}}</a>
+                    <div class="ui-dropdown-line"></div>
+                    {% endfor %}
+                </div>
+                <span class="ui-btn-group ui-btn-group-yellow ui-btn-group-bg">
+                    <a class="ui-btn-group-item{% if type == 0 %} active{% endif %}" href="{% url 'manager:user_index' 0 %}">全部</a>
+                    <a class="ui-btn-group-item{% if type == 1 %} active{% endif %}" href="{% url 'manager:user_index' 1 %}">启用</a>
+                    <a class="ui-btn-group-item{% if type == 2 %} active{% endif %}" href="{% url 'manager:user_index' 2 %}">锁定</a>
+                    <a class="ui-btn-group-item{% if type == 3 %} active{% endif %}" href="{% url 'manager:user_index' 3 %}">有头像</a>
+                </span>
+            </div>
+            
+            <div class="righter">
+                <form action="{% url 'manager:user_index' %}">
+                    <div class="ui-form-group">
+                        <div class="ui-input-group">
+                            <input type="text" name="keyword" class="ui-form-ip radius-right-none" value="{{keyword}}" placeholder="请输入关键字">
+                            <button type="submit" class="after"><div class="ui-icon-search"></div></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+
+        <form method="post" class="ui-form">
+        <div class="ui-table-wrap">
+        <table class="ui-table ui-table-border ui-table-hover ui-table-striped ui-mb">
+            <thead class="ui-thead-gray">
+                <tr>
+                    <th width="80">ID</th>
+                    <th>用户名</th>
+                    <th width="120">余额</th>
+                    <th width="180">邮箱</th>
+                    <th width="120">会员组</th>
+                    <th width="100">登录次数</th>
+                    <th width="150">注册登录</th>
+                    <th width="80">状态</th>
+                    <th width="120">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if not page_obj %}
+            <tr>
+                <td colspan="9">暂无资料</td>
+            </tr>
+            {% endif %}
+            {% for item in page_obj %}
+            <tr>
+                <td>{{item.id}}</td>
+                <td class="ui-text-left"><a href="{% if item.uface %}{{item.uface}}{% else %}{% static '/public/img/noface.gif' %}{% endif %}" target="_blank"><img src="{% if item.uface %}{{item.uface}}{% else %}{% static '/public/img/noface.gif' %}{% endif %}" width="40" class="ui-mr"></a><a href="{% url 'manager:user_gouser' item.id %}" target="_blank">{{item.uname}}</a></td>
+                <td>{{item.umoney}}</td>
+                <td>{{item.uemail}}</td>
+                <td><a href="{% url 'manager:user_index' uid=item.uid %}">{{item.gname}}</a></td>
+                <td>{{item.logintimes}}</td>
+                <td>{{item.regdate}}<br>{{item.lastlogindate}}</td>
+                <td><label class="ui-switch ui-switch-info"><input type="checkbox" {% if item.islock == 1 %} checked{% endif %} data-url="{% url 'manager:user_switchs' item.id %}"><span class="ui-switch-checkbox ui-switch-text"></span></label></td>
+                <td><a href="javascript:;" class="clear" data-url="{% url 'manager:user_clear' item.id %}">清除头像</a><br><a href="javascript:;" data-url="{% url 'manager:user_edit' item.id %}" class="edit-iframe">编辑</a>　<a href="javascript:;" class="del" data-url="{% url 'manager:user_del' item.id %}">删除</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+       </div>
+        {%if page_obj %}
+            <div class="ui-page ui-page-center ui-page-info">
+                <div class="ui-page-list">
+                    <ul>
+                        {% if page_obj.has_previous %}
+                            <li><a href="?page=1">首页</a></li>
+                            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+                        {% endif %}
+                        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+                        {% if page_obj.has_next %}
+                            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+                            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+        {% csrf_token %}
+        </form>
+        <!---->
+    </div>
+<script>
+$(function()
+{
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	$(".add-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"添加会员",
+			'text':url,
+			'width':'550px',
+			'height':'350px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	$(".edit-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"编辑会员",
+			'text':url,
+			'width':'550px',
+			'height':'390px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	$('.ui-switch input[type=checkbox]').on('click',function()
+	{
+		var url=$(this).attr("data-url");
+		var result=($(this).is(':checked'))?1:0;
+		$.ajax(
+		{
+			url:url,
+			type:"post",
+			dataType:'json',
+            headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+			data:"state="+result,
+			error:function(e){alert(e.responseText);},
+			success:function(d)
+			{
+				if(d.state=='success')
+				{
+					wmcms.success(d.msg);
+				}
+				else
+				{
+					wmcms.error(d.msg);
+				}
+			}
+		});
+	});
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'{% url "manager:user_index" %}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='{% url "manager:user_index" %}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+	$(".clear").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要清除？不可恢复！",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					data:'token={$token}',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='{% url "manager:user_index" %}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+	$(".del").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要删除？不可恢复！",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					data:'token={$token}',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='{% url "manager:user_index" %}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+})
+</script>
+</body>
+</html>

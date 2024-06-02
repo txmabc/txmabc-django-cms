@@ -1,0 +1,76 @@
+{% load static %}
+{% load utils %}
+{% include "home/include/top.html" %}
+<title>我的订单</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="bookmark" href="/favicon.ico"/>
+</head>
+<body>
+{% include "home/include/head.html" %}
+{% include "home/include/banner_inner.html" %}
+<div class="container">
+    <div class="width ui-row">
+        <div class="container-left">
+            <div class="ui-fixed-s" data-parent=".container">
+                {% include "users/nav.html" %}
+            </div>
+        </div>
+        
+        <div class="container-right">
+            <div class="ui-box">
+                <div class="ui-box-h2">{{catename}}</div>
+                <div class="ui-box-body">
+                <!--begin-->
+                <form method="post" class="ui-form ui-ml-40 ui-mt-40">
+                    {% for_rs top="1" table="manager_usermodel" where="id={{userid}}" order="id" %}
+                    <div class="ui-form-group ui-row">
+                        <label class="ui-col-2 ui-col-form-label ui-text-right">账户余额：</label>
+                        <div class="ui-col-6 ui-mt-10">
+                            <span class="ui-text-red">{{ rs.umoney }}</span> 元
+                        </div>
+                    </div>
+                    {% endfor_rs %}
+                    <div class="ui-form-group ui-row">
+                        <label class="ui-col-2 ui-col-form-label ui-text-right">充值金额：</label>
+                        <div class="ui-col-6">
+                            <input type="text" name="paymoney" class="ui-form-ip" placeholder="1元起充" data-rule="充值金额:required;dot;between(1,10000);">
+                        </div>
+                    </div>
+                    <div class="ui-form-group ui-row">
+                        <label class="ui-col-2 ui-col-form-label ui-text-right">支付方式：</label>
+                        <div class="ui-col-6">
+                            <ul class="pay" id="orderpay">
+                                {% if PAY_OPEN %}
+                                    {% if PAY_ALIPAY_OPEN %}
+                                    <li><div><img src="{% static 'api/images/pay/alipay.png' %}" data-config="alipay"><i class="ui-icon-check"></i></div></li>
+                                    {% endif %}
+                                    {% if PAY_WXPAY_OPEN %}
+                                    <li><div><img src="{% static 'api/images/pay/wxpay.png' %}" data-config="wxpay"><i class="ui-icon-check"></i></div></li>
+                                    {% endif %}
+                                    {% if PAY_FREE_OPEN %}
+                                    <li><div><img src="{% static 'api/images/pay/alipay.png' %}" data-config="zfb"><i class="ui-icon-check"></i></div></li>
+                                    <li><div><img src="{% static 'api/images/pay/wxpay.png' %}" data-config="weixin"><i class="ui-icon-check"></i></div></li>
+                                    {% endif %}
+                                {% endif %}
+                            </ul>
+                            <input type="hidden" name="type" id="payway" data-rule="支付方式:required;" value="">
+                        </div>
+                    </div>
+                    <div class="ui-form-group ui-row">
+                        <label class="ui-col-2 ui-col-form-label ui-text-right"></label>
+                        <div class="col-6">
+                            <input type="hidden" name="token" value="{$token}"><input type="submit" class="ui-btn ui-btn-blue" value="在线支付">
+                        </div>
+                    </div>
+                </form>
+                <!--over-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include "home/include/foot.html" %}
+</body>
+</html>

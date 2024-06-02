@@ -1,0 +1,44 @@
+{% load utils %}
+<div class="artshow">
+	<div class="ui-row">
+		<div class="ui-col-9"><h1>{{title}}</h1></div>
+		<div class="ui-col-3 ui-text-right"><a href="/job/form/?jobname={{title}}" target="_blank" class="ui-btn ui-btn-blue">提交简历</a></div>
+	</div>
+	
+	<div class="other">
+		<ul>
+			<li><span>工作地点：</span>{{work_address}}<br><span>工作性质：</span>{{work_nature}}</li>
+			<li><span>学历要求：</span>{{work_education}}<br><span>工作年限：</span>{{work_age}}</li>
+			<li><span>薪资待遇：</span>{{work_money}}<br><span>招聘人数：</span>{{work_num}}</li>
+			<li><span>发布日期：</span>{{createdate|fromunix:'%Y-%m-%d'}}<br><span>人气：</span>{{hits}}</li>
+		</ul>
+	</div>
+	
+	<div class="ui-menu ui-menu-blue">
+		<div class="ui-menu-name">工作内容</div>
+	</div>
+	<div class="content ui-mt-20">
+		{{content|safe}}
+	</div>
+	
+	<div class="ui-menu ui-menu-blue">
+		<div class="ui-menu-name">任职要求</div>
+	</div>
+	<div class="content ui-mt-20">
+		{{intro|safe}}
+	</div>
+	
+	<div class="action">
+		<div class="ui-text-center"><a class="digs" data-url="{U('other/digs/','id='.$id.'&act=up','',1)}" data-token="{$token}"><i class="ui-icon-like"></i><em>{{upnum}}</em></a>赞</div>
+		<div class="ui-text-center"><a class="digs" data-url="{U('other/digs/','id='.$id.'&act=down','',1)}" data-token="{$token}"><i class="ui-icon-unlike"></i><em>{{downnum}}</em></a>踩</div>
+	</div>
+	
+	{% if tagslist %}
+	<div class="tags">
+		<i class="ui-icon-tags"></i> 标签：
+        {% for tag in item.tagslist %}
+            <a href="{% url 'home:taglist' tag.id %}" target="_blank" class="ui-btn ui-btn-sm ui-mb">{{tag.name}}</a>
+        {% endfor %}
+	</div>
+    {% endif %}			
+</div>

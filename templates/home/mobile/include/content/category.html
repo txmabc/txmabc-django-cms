@@ -1,0 +1,11 @@
+{% load utils %}
+<div class="ui-row subnav">
+    {% if cateid|stringformat:"d" == sonid and followid %}
+        {% for_rs table="manager_categorymodel" where="followid={{followid}} and isshow=1" order="catenum,cateid" %}
+            <div class="ui-col-4 {% if cateid == rs.cateid %} active{% endif %}"><a href="{% get_cate_home_url rs.cateid rs.catetype rs.cateurl %}" title="{{rs.catename}}">{{rs.catename}}</a></div>
+        {% endfor_rs %}
+    {% endif %}
+    {% for_rp table="manager_categorymodel" where="followid={{cateid}}" order="catenum,cateid" %}
+        <div class="ui-col-4{% if cateid == rp.cateid %} active{% endif %}"><a href="{% get_cate_home_url rp.cateid rp.catetype rp.cateurl %}" title="{{ rp.catename }}">{{ rp.catename }}</a></div>
+	{% endfor_rp %}
+</div>

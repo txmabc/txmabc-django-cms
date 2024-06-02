@@ -1,0 +1,30 @@
+
+{% load static %}
+{% load home_navigation_tags %}
+<header class="nav">
+    <div class="ui-nav">
+        <div class="nav-left">
+            <div class="logo"><a href="/"><img src="{{ WEB_LOGO }}" alt="{{ WEB_NAME }}" style="max-height: 50px;"></a></div>
+            {% home_top_menu %}
+        </div>
+        <div class="nav-right">
+            <div class="ui-nav">
+                <ul>
+                    {% if request.session.user_info.id %}
+                        <li><a>{{ request.session.user_info.uname }}</a></li>
+                        <li><a href="{% url 'users:index' %}">会员中心<span class="ui-icon-down"></span></a>
+                            <ul>
+                                <li><a href="{% url 'users:myorder' %}">我的订单</a></li>
+                                <li><a href="{% url 'users:mymoney' %}">财务明细</a></li>
+                                <li><a href="{% url 'users:logout' %}">退出登录</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                    <li><a href="{% url 'users:login' %}">登录</a></li>
+                    <li><a href="{% url 'users:register' %}">注册</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

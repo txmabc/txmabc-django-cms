@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>编辑模板</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script>var api_url="{% url 'manager:upload_imagelist' type=3 multiple=1 %}";</script>
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+<script src="{% static '/public/admin/js/base.js' %}"></script>
+<script src="{% static '/public/tinymce/tinymce.min.js' %}"></script>
+</head>
+<body>
+    <div class="position">当前位置：模板插件 > <a href="{% url 'manager:mail_index' %}">邮件模板</a> > <a href="{% url 'manager:mail_edit' id %}">编辑模板</a></div>
+    <div class="borders">
+        <!---->
+        <div class="ui-tabs ui-tabs-white" data-href="1">
+            <ul class="ui-tabs-nav">
+              <li class="active"><a href="{% url 'manager:mail_edit' id %}">编辑模板</a></li>
+            </ul>
+            <div class="ui-tabs-content">
+                <div class="ui-tabs-pane active">
+                <!--loop-->
+                <form class="ui-form" method="post">
+                    <div class="ui-form-group ui-row">
+                        <label class="col-left ui-col-form-label">用途：</label>
+                        <div class="col-right">
+                            <input type="text" name="title" class="ui-form-ip" value="{{title}}" placeholder="请输入用途" data-rule="用途:required;">
+                        </div>
+                    </div>
+                    <div class="ui-form-group ui-row">
+                        <label class="col-left ui-col-form-label">邮件标题：</label>
+                        <div class="col-right">
+                            <input type="text" name="mail_title" class="ui-form-ip" value="{{mail_title}}" placeholder="请输入邮件标题" data-rule="邮件标题:required;">
+                        </div>
+                    </div>
+                    <div class="ui-form-group ui-row">
+                        <label class="col-left ui-col-form-label">邮件内容：</label>
+                        <div class="col-right-full">
+                            <textarea id="mail_content" name="mail_content" class="tinymce-textarea" >{{mail_content}}</textarea>
+                        </div>
+                    </div>
+                    <div class="ui-form-group ui-row">
+                        <label class="col-left ui-col-form-label">状态：</label>
+                        <div class="col-right col-right-top">
+                            <label class="ui-radio"><input type="radio" name="islock" value="1" {% if islock == 1 %} checked{% endif %}><i></i>启用</label>
+                            <label class="ui-radio"><input type="radio" name="islock" value="0" {% if islock == 0 %} checked{% endif %}><i></i>锁定</label>
+                        </div>
+                    </div>
+                    <div class="ui-form-group ui-row">
+                        <label class="col-left ui-col-form-label"></label>
+                        <div class="col-right">
+                            <button type="submit" class="ui-btn ui-btn-info ui-mr">保存</button>
+                            <button type="button" class="ui-btn ui-back">返回</button>
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                </form>
+                <!--loop-->
+                </div>
+            </div>
+        </div>
+        <!---->
+    </div>
+
+    <script src="{% static '/public/admin/js/tinymce_auto.js' %}"></script>
+<script>
+$(function()
+{
+
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'bottom-center',
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'{% url "manager:mail_edit" id %}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                       	setTimeout(function(){location.href='{% url "manager:mail_index" %}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }  
+                }
+            });
+		}
+	});
+})
+</script>
+</body>
+</html>

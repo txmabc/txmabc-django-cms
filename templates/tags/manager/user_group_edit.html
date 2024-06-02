@@ -1,0 +1,5 @@
+{% load manager_user_tags %}
+
+{% for user_group in user_group_items %}    
+    <label class="ui-checkbox"><input type="checkbox" name="categroup[]" id="categroup_{{ user_group.gid }}" value="{{ user_group.gid }}" {% if user_group.gid in categroup_items %} checked{% endif %}><i></i>{{ user_group.gname }}</label>
+{% endfor %}

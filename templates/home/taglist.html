@@ -1,0 +1,38 @@
+{% include "home/include/top.html" %}
+<title>{{tagname}}_{{WEB_NAME}}</title>
+<meta name="keywords" content="{{SEO_KEY}}">
+<meta name="description" content="{{SEO_DESC}}">
+</head>
+
+<body>
+    {% include "home/include/head.html" %}
+
+	{% include "home/include/banner_inner.html" %}
+
+	<div class="container">
+		<div class="width ui-row">
+			<div class="container-left">
+				<div class="ui-fixed-s" data-parent=".container">
+					{% include "home/include/left_nav.html" %}
+				</div>
+			</div>
+			
+			<div class="container-right">
+			
+				<div class="ui-box">
+					<div class="ui-box-h2">{{tagname}}</div>
+					<div class="ui-box-body">
+						<!--begin-->
+						{% include "home/include/content/news/list.html" %}
+						<!--over-->
+					</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+
+    {% include "home/include/foot.html" %}
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+{% load static %}
+{% load manager_category_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>栏目管理</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+<body>
+    <div class="position">当前位置：<a href="{{ request.get_full_path }}">栏目管理</a></div>
+    <div class="border">
+        <!---->
+        <a href="/manager/category/add/?fid={{ fid }}" class="ui-btn ui-btn-info ui-mr-sm">添加分类</a>
+        {% if fid %}
+			<a href="{% url 'manager:category_index' %}?fid={{ pid }}" class="ui-btn ui-btn-yellow">返回上级</a>
+		{% else %}
+			<a href="javascript:;" class="refresh ui-btn ui-btn-yellow">更新缓存</a>
+        {% endif %}
+        
+        <form method="post" class="ui-form">
+            {% csrf_token %}
+            {% category_list %}
+        </form>
+        <!---->
+    </div>
+    
+<script>
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+$(function()
+{
+	$('.ui-switch input[type=checkbox]').on('click',function()
+	{
+		var url=$(this).attr("data-url");
+		var result=($(this).is(':checked'))?1:0;
+		$.ajax(
+		{
+			url:url,
+			type:"post",
+			dataType:'json',
+			headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+			data:"state="+result,
+			error:function(e){alert(e.responseText);},
+			success:function(d)
+			{
+				if(d.state=='success')
+				{
+					wmcms.success(d.msg);
+				}
+				else
+				{
+					wmcms.error(d.msg);
+				}
+			}
+		});
+	});
+	
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'/manager/category/index/?fid={{ fid }}',
+				headers: {'X-CSRFToken': csrftoken},
+            	mode: 'same-origin',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='/manager/category/index/?fid={{ fid }}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+	
+	$(".refresh").click(function()
+	{
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要更新分类缓存？",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:'{% url "manager:category_refresh" %}',
+					type:'post',
+					dataType:'json',
+					headers: {'X-CSRFToken': csrftoken},
+            		mode: 'same-origin',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='/manager/category/index/?fid={{ fid }}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+	
+	$(".move").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"移动分类",
+			'text':url,
+			'width':'600px',
+			'height':'330px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+
+	$(".del").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要删除？不可恢复！",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					headers: {'X-CSRFToken': csrftoken},
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='/manager/category/index/?fid={{ fid }}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+})
+</script>
+</body>
+</html>

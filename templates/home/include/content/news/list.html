@@ -1,0 +1,40 @@
+{% load utils %}
+{% if not page_obj %}
+没有资料
+{% endif %}
+{% for item in page_obj %}
+<div class="artlist-item">
+    {% if item.ispic == 1 %}<div class="artlist-item-image"><a href="{{item.link}}" title="{{item.title}}" target="_blank"><img src="{{item.pic}}" alt="{{item.title}}" /></a></div>{% endif %}
+    <div class="artlist-item-body">
+        <a href="{{item.link}}" title="{{item.title}}" target="_blank">
+            <div class="title">{{item.title}}</div>
+            <div class="desc">{{item.intro}}</div>
+        </a>
+        {% if item.tagslist %}
+        <div class="tags">
+            <i class="ui-icon-tags ui-mr-sm"></i>
+            {% for tag in item.tagslist %}
+                <a href="{% url 'home:taglist' tag.id %}" target="_blank" class="ui-btn ui-btn-sm ui-mb">{{tag.name}}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <div class="artlist-item-date">{{item.createdate|fromunix:'%m-%d'}}</div>
+</div>
+{% endfor %}
+{%if page_obj %}
+<div class="ui-page ui-page-center ui-page-mid ui-mt-20">
+    <ul>
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">首页</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% csrf_token %}

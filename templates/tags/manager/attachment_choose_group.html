@@ -1,0 +1,5 @@
+{% load manager_attachment_tags %}
+
+{% for rs in attachment_group_list %}
+    <li{% if gid == rs.aid %} class="actice"{% endif %}><a href="/manager/upload/imagelist/?multiple={{multiple}}&type={{type}}&iseditor={{iseditor}}&islocal={{islocal}}&gid={{rs.aid}}&thumb={{thumb}}&water={{water}}"><span>{{rs.num}}</span>{{rs.gname}}</a></li>
+{% endfor %}

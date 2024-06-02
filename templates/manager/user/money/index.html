@@ -1,0 +1,110 @@
+{% load static %}
+{% load manager_user_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>财务管理</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+
+<body>
+    <div class="position">当前位置：会员管理 > <a href="{% url 'manager:usermoney_index' %}">财务管理</a></div>
+    <div class="border">
+        <!---->
+        <div class="navbar">
+            <div class="lefter">
+                <a href="javascript:;" data-url="{% url 'manager:usermoney_add' %}" class="add-iframe ui-btn ui-btn-info ui-mr-sm">财务入账</a>
+                <span class="ui-btn-group ui-btn-group-yellow ui-btn-group-bg">
+                    <a class="ui-btn-group-item{% if atype == 0 %} active{% endif %}" href="{% url 'manager:usermoney_index' %}?type=0">全部</a>
+                    <a class="ui-btn-group-item{% if atype == 1 %} active{% endif %}" href="{% url 'manager:usermoney_index' %}?type=1">收入</a>
+                    <a class="ui-btn-group-item{% if atype == 2 %} active{% endif %}" href="{% url 'manager:usermoney_index' %}?type=2">支出</a>
+                </span>
+            </div>
+            
+            <div class="righter">
+                <form action="{{ request.build_absolute_uri }}">
+                    <div class="ui-form-group">
+                        <div class="ui-input-group">
+                            <input type="text" name="keyword" class="ui-form-ip radius-right-none" value="{{ keyword|default_if_none:"" }}" placeholder="请输入关键字">
+                            <button type="submit" class="after"><div class="ui-icon-search"></div></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+
+        <form method="post" class="ui-form">
+            {% manager_usermoney_lists %}
+            {% csrf_token %}
+        </form>
+        <!---->
+    </div>
+
+<script>
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+$(function()
+{
+	$(".add-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"财务入账",
+			'text':url,
+			'width':'500px',
+			'height':'290px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	$(".del").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要删除？不可恢复！",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					headers: {'X-CSRFToken': csrftoken},
+                    mode: 'same-origin',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='{{ request.build_absolute_uri }}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+})
+</script>
+</body>
+</html>

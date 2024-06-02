@@ -1,0 +1,48 @@
+{% load static %}
+{% load utils %}
+{% include "home/mobile/include/top.html" %}
+<title>{{ catename }}</title>
+<meta name="keywords" content="{{ webconfig.seo_key }}">
+<meta name="description" content="{{ webconfig.seo_desc }}">
+<link rel="shortcut icon" href="{% static '/favicon.ico' %}"/>
+<link rel="bookmark" href="{% static '/favicon.ico' %}"/>
+{% include "home/mobile/include/wxshare.html" %}
+</head>
+
+<body>
+    <div class="ui-mwidth" id="nav-top">
+        <div class="ui-topbar ui-topbar-opacity ui-topbar-three ui-fixed ui-mwidth" data-align="fixed-top">
+           <div class="ui-topbar-left"><a href="javascript:;" class="ui-icon-left ui-back"></a></div>
+           <div class="ui-topbar-title ui-scrollnav" data-offset="1">
+               <ul>
+                   <li class="active"><a href="#nav-top">商品详情</a></li>
+               </ul>
+           </div>
+           <div class="ui-topbar-right"><a href="javascript:;" class="ui-offside-show" data-target="#ui-offside-nav"><i class="ui-icon-lists"></i></a></div>
+       </div>
+   </div>
+	{% include "home/mobile/include/nav.html" %}
+
+    <!--商品页大图开始-->
+
+    {% if picdata %}
+    <div class="ui-mwidth banner" id="show_photo">
+		<div class="ui-carousel" data-arrow="false" data-page="true">
+			<div class="ui-carousel-inner">
+                {% for val in picdata %}
+                <div class="ui-carousel-item{% if forloop.counter == 1 %} active{% endif %}"><a href="{% thumb val.image 60 60 %}" class="ui-lightbox" title="{{val.desc}}"><img src="{{val.image}}" alt="{{val.desc}}"></a></div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	<div class="ui-mwidth">
+		<div class="ui-box ui-p-10">
+			{% include "home/mobile/include/content/pro/show.html" %}
+			<div class="ui-pt-20 ui-bg-white"></div>
+		</div>
+	</div>
+	{% include "home/mobile/include/content/pro/show_foot.html" %}
+</body>
+</html>

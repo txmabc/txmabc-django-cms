@@ -1,0 +1,277 @@
+{% load static %}
+{% load manager_category_tags %}
+{% load manager_user_tags %}
+{% load utils %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>添加内容</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/select/select.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script>var api_url = "/manager/upload/imagelist/?type=3&multiple=1";</script>
+    <script src="{% static 'public/js/jquery.js' %}"></script>
+    <script src="{% static 'public/js/ui.js' %}"></script>
+    <script src="{% static 'public/select/select.js' %}"></script>
+    <script src="{% static 'public/js/dropzone.js' %}"></script>
+    <script src="{% static 'public/js/sortable.min.js' %}"></script>
+    <script src="{% static '/public/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'public/admin/js/base.js' %}"></script>
+</head>
+
+<body>
+
+    <div class="position">当前位置：<a href="/manager/content/lists">内容管理</a>{% if classid > 0 %}{{classid|get_page_postion|safe}}{% endif %}</div>
+    <div class="borders">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="ui-tabs ui-tabs-white">
+                <ul class="ui-tabs-nav">
+                    <li class="active"><a href="javascript:void(0)">基本设置</a></li>
+                    <li><a href="javascript:void(0)">SEO设置</a></li>
+                    <li><a href="javascript:void(0)">可选设置</a></li>
+                </ul>
+
+                <div class="ui-tabs-content">
+                    <div class="ui-tabs-pane active">
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">标题：</label>
+                            <div class="col-right">
+                                <input type="text" name="title" id="title" class="ui-form-ip" maxlength="255" value=""
+                                    data-rule="标题:required;">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">组图：</label>
+                            <div class="col-right-full"> 
+                                <input type="hidden" name="piclist" id="piclist" value="">
+                                <div class="ui-btn-group ui-mt-sm">
+                                    <a class="ui-btn-group-item fm-choose ui-icon-cloud-upload" data-name="piclist" data-url="/manager/upload/imageupload/?type=1&multiple=1&thumb=0&water=0" data-type="0" data-multiple="1" title="上传">上传</a>
+                                    <a class="ui-btn-group-item fm-choose ui-icon-select" data-name="piclist" data-url="/manager/upload/imagelist/?type=1&multiple=1&iseditor=0" data-type="0" data-multiple="1" title="选择">选择</a>
+                                </div>							
+                                <div class="imagelist">								
+                                    <ul id="list_piclist"></ul>
+                                </div>
+                            </div>
+                        </div>        
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">正文：</label>
+                            <div class="col-right-full">
+                                <textarea id="content" name="content" class="tinymce-textarea" ></textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">简介：</label>
+                            <div class="col-right">
+                                <textarea name="intro" class="ui-form-ip" id="intro" rows="3" cols="50" ></textarea>                                                    </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">缩略图：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> 
+                                    <input type="text" name="pic" id="pic" class="ui-form-ip radius-right-none" maxlength="255" value=""> 
+                                    <a class="after fm-choose ui-icon-cloud-upload radius-none" data-name="pic" data-url="/manager/upload/imageupload/?type=1&multiple=0&thumb=0%water=0.html" data-type="1" data-multiple="0" title="上传">上传</a> 
+                                    <a class="after fm-choose ui-icon-select radius-none" data-name="pic" data-url="/manager/upload/imagelist/?type=1" data-type="1" data-multiple="0"                                 title="选择">选择</a> 
+                                    <a class="after ui-lightbox ui-icon-zoomin" data-id="pic" data-name="lightbox-pic" title="缩略图">预览</a> </div>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">标签：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> 
+                                    <input type="text" name="tags" id="tags" class="ui-form-ip radius-right-none" maxlength="255" value=""> 
+                                    <a class="after ui-icon-select fm-tags" data-name="tags" data-url="/manager/content/taglist/" title="选择">选择</a> 
+                                </div> 
+                                <span class="input-tips">多个标签请使用英文逗号隔开，不能超过10个</span>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">购买价格：</label>
+                            <div class="col-right">
+                                <input type="text" name="price" id="price" class="ui-form-ip" maxlength="10" value="0"
+                                    data-rule="购买价格:required;dot"> <span class="input-tips">单位：元</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-tabs-pane">
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">优化标题：</label>
+                            <div class="col-right">
+                                <input type="text" name="seotitle" id="seotitle" class="ui-form-ip" maxlength="255"
+                                    value="">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">关键字：</label>
+                            <div class="col-right">
+                                <textarea name="seokey" class="ui-form-ip" id="seokey" rows="3" cols="50"></textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">描述：</label>
+                            <div class="col-right">
+                                <textarea name="seodesc" class="ui-form-ip" id="seodesc" rows="3" cols="50"></textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">别名：</label>
+                            <div class="col-right">
+                                <input type="text" name="alias" id="alias" class="ui-form-ip" maxlength="50" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-tabs-pane">
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">外链：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> 
+                                    <input type="text" name="url" id="url" class="ui-form-ip radius-right-none" maxlength="255" value=""> 
+                                    <a class="after fm-choose ui-icon-cloud-upload radius-none" data-name="url" data-url="/manager/upload/imageupload/?type=3&multiple=0&thumb=0&water=0.html" data-type="0" data-multiple="0" title="上传">上传</a> 
+                                    <a class="after fm-choose ui-icon-select" data-name="url" data-url="/manager/upload/imagelist/?type=3" data-type="3" data-multiple="0" title="选择">选择</a> 
+                                </div> 
+                                <span class="input-tips">添加外链时，将不显示正文内容</span>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">人气：</label>
+                            <div class="col-right">
+                                <input type="text" name="hits" id="hits" class="ui-form-ip" maxlength="10" value="0">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">赞数量：</label>
+                            <div class="col-right">
+                                <input type="text" name="upnum" id="upnum" class="ui-form-ip" maxlength="10" value="0">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">踩数量：</label>
+                            <div class="col-right">
+                                <input type="text" name="downnum" id="downnum" class="ui-form-ip" maxlength="10"
+                                    value="0">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">排序：</label>
+                            <div class="col-right">
+                                <input type="text" name="ordnum" id="ordnum" class="ui-form-ip" maxlength="10"
+                                    value="0"> <span class="input-tips">数字越大越靠前</span>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">置顶：</label>
+                            <div class="col-right col-right-top">
+                                <label class="ui-radio"><input type="radio" name="ontop" value="0"
+                                        checked><i></i>否</label> <label class="ui-radio"><input type="radio"
+                                        name="ontop" value="1"><i></i>是</label>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">推荐：</label>
+                            <div class="col-right col-right-top">
+                                <label class="ui-radio"><input type="radio" name="isnice" value="0"
+                                        checked><i></i>否</label> <label class="ui-radio"><input type="radio"
+                                        name="isnice" value="1"><i></i>是</label>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">定时发布：</label>
+                            <div class="col-right col-right-top">
+                                <label class="ui-radio"><input type="radio" name="isauto" value="0"
+                                        checked><i></i>否</label>
+                                <label class="ui-radio"><input type="radio" name="isauto" value="1"><i></i>是</label>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">发布日期：</label>
+                            <div class="col-right">
+                                <input type="text" name="createdate" id="createdate" class="ui-form-ip datepick-time"
+                                    value="{% now 'Y-m-d H:i:s' %}">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">内容页模板：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> 
+                                    <input type="text" name="showskin" id="showskin" class="ui-form-ip radius-right-none" maxlength="255" value=""> 
+                                    <a class="after ui-icon-select template" data-name="showskin" data-url="/manager/theme/template.html" title="选择">选择</a> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-form-group ui-mt">
+                {% csrf_token %}
+                <button type="submit" class="ui-btn ui-btn-info ui-mr-sm">保存</button>
+                <button type="button" class="ui-btn ui-back">返回</button>
+            </div>
+        </form>
+        <!---->
+    </div>
+    <script src="{% static '/public/datepick/laydate.js' %}"></script>
+    <script src="{% static '/public/admin/js/tinymce_auto.js' %}"></script>
+    <script>
+        $(function () {
+
+            $('.selectbox').SumoSelect(
+                {
+                    csvDispCount: 4,
+                    captionFormat: '已选择：{0} 个',
+                });
+
+            lay('.datepick').each(function () {
+                laydate.render(
+                    {
+                        elem: this,
+                        trigger: 'click'
+                    });
+            });
+            lay('.datepick-time').each(function () {
+                laydate.render(
+                    {
+                        elem: this,
+                        type: 'datetime',
+                        trigger: 'click'
+                    });
+            });
+            $(".ui-form").form(
+                {
+                    type: 2,
+                    result: function (form) {
+                        let dataList = [];
+                        $("#list_piclist li").each(function(){
+                            let num=parseInt($(this).attr("num"));
+                            let image = $(this).find("input[name=piclist_" + num + "_image]").val();
+                            let desc = $(this).find("input[name=piclist_" + num + "_desc]").val();
+                            dataList.push({'id':num, 'image':image, 'desc':desc});
+                        });
+                        $('#piclist').val(JSON.stringify(dataList));
+                        $.ajax(
+                            {
+                                type: 'post',
+                                cache: false,
+                                dataType: 'json',
+                                url: '/manager/product/add/?classid={{classid}}',
+                                data: $(form).serialize(),
+                                error: function (e) { alert(e.responseText); },
+                                success: function (d) {
+                                    if (d.state == 'success') {
+                                        wmcms.success(d.msg);
+                                        setTimeout(function () { location.href = '/manager/content/lists?classid={{classid}}'; }, 1500);
+                                    }
+                                    else {
+                                        wmcms.error(d.msg);
+                                    }
+                                }
+                            });
+                    }
+                });
+        })
+    </script>
+</body>
+</html>

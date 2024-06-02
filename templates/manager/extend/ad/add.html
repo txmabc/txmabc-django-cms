@@ -1,0 +1,122 @@
+{% load static %}
+{% load utils %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>添加广告</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script>var api_url = "/manager/upload/imagelist/?type=3&multiple=1";</script>
+    <script src="{% static 'public/js/jquery.js' %}"></script>
+    <script src="{% static 'public/js/ui.js' %}"></script>
+    <script src="{% static 'public/js/dropzone.js' %}"></script>
+    <script src="{% static 'public/js/sortable.min.js' %}"></script>
+    <script src="{% static 'public/admin/js/base.js' %}"></script>
+</head>
+
+<body>
+
+    <div class="position">当前位置：扩展管理 > <a href="{% url 'manager:advert_index' %}">广告管理</a> > <a href="{% url 'manager:advert_add'%}">添加广告</a></div>
+    <div class="border">
+        <!---->
+        <form class="ui-form" method="post">
+        	<div class="form-subject">添加广告</div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">广告名称：</label>
+                <div class="col-right">
+                    <input type="text" name="title" class="ui-form-ip" value="" placeholder="请输入广告名称" data-rule="广告名称:required;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">广告内容：</label>
+                <div class="col-right-full">
+                    <div class="ui-btn-group ui-mt-sm">
+                        <a class="ui-btn-group-item fm-choose-ad ui-icon-cloud-upload" data-name="datalist" data-url="/manager/upload/imageupload/?type=1&multiple=1" data-type="1" data-multiple="1" title="上传">上传</a>
+                        <a class="ui-btn-group-item fm-choose-ad ui-icon-select" data-name="datalist" data-url="/manager/upload/imagelist/?type=1&multiple=1" data-type="1" data-multiple="1" title="选择">选择</a>
+                    </div>
+                    <div class="imagelist">
+                        <ul id="list_datalist">
+                            <input type="hidden" name="datalist" id="datalist" value="">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">排序：</label>
+                <div class="col-right">
+                    <input type="text" name="ordnum" class="ui-form-ip" value="0">
+                    <span class="input-tips">数字越小越靠前</span>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label">状态：</label>
+                <div class="col-right col-right-top">
+                	<label class="ui-radio"><input type="radio" name="islock" value="1" checked><i></i>启用</label>
+                    <label class="ui-radio"><input type="radio" name="islock" value="0"><i></i>锁定</label>
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="col-left ui-col-form-label"></label>
+                <div class="col-right">
+                	{% csrf_token %}
+                    <button type="submit" class="ui-btn ui-btn-info ui-mr">保存</button>
+                    <button type="button" class="ui-btn ui-back">返回</button>
+                </div>
+            </div>
+        </form>
+        <!---->
+    </div>
+
+<script>
+$(function()
+{
+	Sortable.create($("#list_datalist")[0],{animation:400,});
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+            let datalist=[];
+            $("#list_datalist li").each(function(){
+				var num = $(this).attr("num");
+                let picitem = {'id':num, 'image': $('input[name=datalist_'+num+'_image]').val(), 'desc':$('textarea[name=datalist_'+num+'_desc]').val()?$('textarea[name=datalist_'+num+'_desc]').val():'', 'url':$('textarea[name=datalist_'+num+'_url]').val()?$('textarea[name=datalist_'+num+'_url]').val():''};
+                if(datalist.length){
+                    datalist.push(picitem);
+                }else{
+                    datalist=[picitem];
+                }
+			});
+            $('#datalist').val(JSON.stringify(datalist));
+
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'{% url "manager:advert_add" %}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='{% url "manager:advert_index" %}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+})
+</script>
+</body>
+</html>

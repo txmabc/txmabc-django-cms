@@ -1,0 +1,78 @@
+{% load static %}
+{% include "home/include/top.html" %}
+<title>会员中心</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="bookmark" href="/favicon.ico"/>
+</head>
+<body>
+{% include "home/include/head.html" %}
+{% include "home/include/banner_inner.html" %}
+<div class="container">
+    <div class="width ui-row">
+        <div class="container-left">
+            <div class="ui-fixed-s" data-parent=".container">
+                {% include "users/nav.html" %}
+            </div>
+        </div>
+        
+        <div class="container-right">
+        
+            <div class="ui-box">
+                <div class="ui-box-h2">{{catename}}</div>
+                <div class="ui-box-body">
+                    <!--begin-->
+                    <div class="user_info">
+                        <div class="face"><img src="{% if user.uface %}{{user.uface}}{% else %}{% static '/public/img/noface.gif' %}{% endif %}" class="dropzone" id="uface" config="uface" url="{% url 'users:face' %}" maxsize="2"></div>
+                        <div class="info">
+                            <p><span>{{user.uname}}</span>　{{welcome}}</p>
+                            <ul>
+                                <li><em>级别：</em>{{user.gname}}</li>
+                                <li><em>邮箱：</em>{{user.uemail}}</li>
+                                <li><em>余额：</em><span>{{user.umoney}}</span> <a class="ui-btn ui-btn-blue ui-fr ui-mt-sm" href="{% url 'users:pay' %}">在线充值</a></li>
+                                <li><em>登录：</em><span>{{user.logintimes}}</span> 次</li>
+                            </ul>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <!--over-->
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+{% include "home/include/foot.html" %}
+{% csrf_token %}
+<script src="{% static '/public/js/dropzone.js' %}"></script>
+    <script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	$(".dropzone").dropzone(
+	{
+		maxFiles:1,
+		headers: {'X-CSRFToken': csrftoken},
+        mode: 'same-origin',
+		acceptedFiles:".jpg,.jpeg,.gif,.png",
+		success:function(file,data,that)
+		{
+			// data=jQuery.parseJSON(data);
+			this.removeFile(file);
+			if(data.state=="success")
+			{
+				wmcms.success("上传成功");
+				$("#"+$(that).attr("src",data.msg));
+			}
+			else
+			{
+				wmcms.error("上传失败："+data.msg);
+			}
+		},
+		error:function(file,msg)
+		{
+			wmcms.error(msg);
+		}
+	});
+	</script>
+</body>
+</html>

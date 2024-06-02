@@ -1,0 +1,14 @@
+{% load static %}
+<div class="banner_inner" style="background:url({% static 'public/img/banner.png' %}) no-repeat center;">
+	<div class="width">
+		<div class="title">{{catename}}{% if encatename %}<span>{{encatename}}</span>{% endif %}</div>
+		<div class="intro"></div>
+		<div class="position">
+			<div class="ui-bread ui-bread-1">
+				<ul>
+					<li><a href="/"><i class="ui-icon-home ui-text-gray ui-mr"></i>首页</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

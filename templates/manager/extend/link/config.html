@@ -1,0 +1,73 @@
+{% load static %}
+{% load manager_config_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>链接配置</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+<script src="{% static '/public/admin/js/base.js' %}"></script>
+</head>
+
+<body>
+    <div class="position">当前位置：扩展管理 > <a href="{% url 'manager:link_index' %}">链接管理</a> > <a href="{% url 'manager:link_config' %}">链接配置</a></div>
+    <div class="borders">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="ui-tabs ui-tabs-white" data-href="1">
+                <ul class="ui-tabs-nav">
+                    <li class="active"><a href="{% url 'manager:link_config' %}">{{config_info.gname}}</a></li>
+                </ul>
+                <div class="ui-tabs-content">
+                    <div class="ui-tabs-pane active">
+                        {% config_group_children gid=config_info.id %}
+                    </div>
+                </div>
+            </div>
+            {% csrf_token %}
+			<button type="submit" class="ui-btn ui-btn-info ui-mt-15">保存设置</button>
+        </form>
+        <!---->
+    </div>
+    
+<script>
+$(function()
+{
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+				url:'{% url "manager:link_config" id=config_info.id %}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='{% url "manager:link_index" %}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+})
+</script>
+</body>
+</html>

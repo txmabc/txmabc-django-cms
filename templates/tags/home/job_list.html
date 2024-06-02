@@ -1,0 +1,45 @@
+{% load home_content_tags %}
+{% load utils %}
+<div class="artlist">
+    {% if not page_obj %}
+        <div class="ui-font-14">没有资料</div>
+    {% endif %}
+
+	{% if page_obj %}
+        {% for item in page_obj %}
+            <div class="artlist-item">
+                <div class="artlist-item-body">
+                    <a href="{{item.link}}" title="{{item.title}}" target="_blank">
+                        <div class="title">{{item.title}}</div>
+                        <div class="desc">{{item.intro|safe}}</div>
+                    </a>
+                    {% if item.taglist %}
+                        <div class="tags">
+                            <i class="ui-icon-tags ui-mr-sm"></i>
+                            {% for tag in item.tagslist %}
+                                <a href="{% url 'home:taglist' tag.id %}" target="_blank" class="btn btn-sm">{{tag.name}}</a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="artlist-item-date artlist-item-money"><span>薪资待遇：</span>{{item.work_money}}</div>
+            </div>
+        {% endfor %}
+	{% endif %}
+</div>
+{%if page_obj %}
+<div class="ui-page ui-page-center ui-page-mid ui-mt-20">
+    <ul>
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">首页</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% csrf_token %}

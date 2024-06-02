@@ -1,0 +1,5 @@
+{% load manager_attachment_tags %}
+
+{% for item in attachment_group_list %}
+    <option value="{{ item.aid }}" {% if gid == item.aid %} selected{% endif %}>{{ item.gname }}</option>
+{% endfor %}

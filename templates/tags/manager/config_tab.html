@@ -1,0 +1,15 @@
+{% load manager_config_tags %}
+<div class="ui-tabs ui-tabs-white" data-href="1">
+    <ul class="ui-tabs-nav">
+        {% for item  in config_group %}
+        <li{% if id == item.id %} class="active"{% endif %}><a href="{% url 'manager:config_index' item.id %}">{{item.gname}}</a></li>
+        {% endfor %}
+    </ul>
+    <div class="ui-tabs-content">
+        {% for item  in config_group_one %}
+        <div class="ui-tabs-pane active">
+            {% config_group_children gid=item.id %}
+        </div>
+        {% endfor %}
+    </div>
+</div>

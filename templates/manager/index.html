@@ -1,0 +1,97 @@
+{% load static %}
+{% load manager_menu_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>管理首页</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+    <script src="{% static '/public/scroll/jquery.slimscroll.js' %}"></script>
+    <base target="iframe_body">
+</head>
+<body>
+    <div class="ui-north">
+        <div class="logo"><img src="{% static '/public/admin/images/logo.svg' %}" height="40"></div>
+        <div class="user_base">创始人<span class="ui-icon-down"></span>
+            <ul>
+                <li><a href="javascript:;" class="editpass" data-url="{% url 'manager:index_pass' %}">修改密码</a></li>
+                <li><a href="{% url 'manager:out' %}" target="_parent">退出登录</a></li>
+            </ul>
+        </div>
+        <div class="other_left"><a href="javascript:;" class="ui-icon-Import"></a></div>
+        <div class="other_menu"><a class="ui-icon-list ui-offside-show" href="javascript:;"
+                data-target="#offside-left"></a></div>
+        <div class="other_link">
+            <ul>
+                <li><a href="/" target="_blank">预览网站</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="ui-body">
+        <div class="ui-west">
+            <!---->
+            <div class="leftwarp">
+                <div class="ui-collapse-menu-title active"><a href="{% url 'manager:index' %}" target="_parent">管理首页</a></div>
+                {% left_menu %}
+            </div>
+            <!---->
+        </div>
+
+        <div class="ui-center"></div>
+
+    </div>
+    <div class="ui-offside ui-offside-left" id="offside-left">
+
+    </div>
+    <script>
+        $(function () {
+            $(".user_base").hover(function () {
+                $("ul", this).css("display", "block");
+            },
+                function () {
+                    $("ul", this).css("display", "none");
+                });
+            $("#offside-left").html($(".ui-west").html());
+            $('.ui-collapse-menu-body li').bind('click', function () {
+                $('.ui-collapse-menu-body li').removeClass('hover');
+                $(this).addClass('hover');
+            });
+            //模拟滚动条		
+            $(".leftwarp").slimscroll({ height: "auto", size: "5px", color: "#9CABC3", opacity: 0.6, wheelStep: 5, touchScrollStep: 50 });
+            $(".ui-center").html('<iframe name="iframe_body" src="/manager/right/" width="100%" height="100%" frameborder="0"></iframe>');
+            $(".other_left a").click(function () {
+                if ($(".ui-body").hasClass("ui-mobile")) {
+                    $(".ui-body").removeClass("ui-mobile");
+                }
+                else {
+                    $(".ui-body").addClass("ui-mobile");
+                }
+            })
+
+            $(".editpass").click(function () {
+                var url = $(this).attr("data-url");
+                $.dialogbox(
+                    {
+                        'title': "修改密码",
+                        'text': url,
+                        'width': '480px',
+                        'height': '230px',
+                        'type': 3,
+                        'oktheme': 'ui-btn-info',
+                        'ok': function (e) {
+                            e.iframe().contents().find("#wmcms-submit").click();
+                        }
+                    });
+            });
+        })
+    </script>
+</body>
+
+</html><!--Processed in 0.051584 s , Memory 2.17 M , 12 queries-->

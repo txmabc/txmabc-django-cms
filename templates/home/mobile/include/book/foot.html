@@ -1,0 +1,42 @@
+<script>
+$(function()
+{
+	$("#verify").click(function(){
+        $.get('/captcha/refresh/', function (data) {
+            $('#captcha_0').attr('value', data.key);
+            $('#verify').attr('src', data.image_url);
+        });
+        $("#code").val("");
+     });
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'center',
+		result:function(form)
+		{
+			$.ajax(
+			{
+				type:'post',
+				cache:false,
+				dataType:'json',
+				url:'/book.html',
+				data:$(form).serialize(),
+				error:function(e){alert(e.responseText);},
+				success:function(d)
+				{
+					if(d.state=='success')
+					{
+						wmcms.success(d.msg);
+						setTimeout(function(){location.href='/book.html';},1500);
+					}
+					else
+					{
+						$("#verify").click();
+						wmcms.error(d.msg);
+					}  
+				}
+			});
+		}
+	});
+})
+</script>

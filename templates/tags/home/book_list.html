@@ -1,0 +1,35 @@
+{% if not page_obj %}
+<div class="ui-pt-15">暂无留言</div>
+{% endif %}
+
+{% if page_obj %}
+    {% for item in page_obj %}
+    <div class="ui-card ui-card-book ui-mt-20">
+        <div class="ui-card-header"><div class="ui-card-header-title">{{item.truename}}</div><div class="ui-card-header-more ui-text-gray">{{item.createdate}}</div></div>
+        <div class="ui-card-body">
+            <div>{{item.remark}}</div>
+        </div>
+        {% if item.reply %}
+        <div class="ui-card-footer">
+            <strong>回复：</strong> {{item.reply}}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+{% endif %}
+
+{%if page_obj %}
+<div class="ui-page ui-page-center ui-page-mid ui-mt-20 ui-mb">
+    <ul>
+        {% if page_obj.has_previous %}
+            <li><a href="?page=1">首页</a></li>
+            <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+        {% endif %}
+        <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+            <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}

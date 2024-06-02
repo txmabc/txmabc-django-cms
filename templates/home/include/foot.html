@@ -1,0 +1,50 @@
+{% load static %}
+{% load home_link_tags %}
+{% load utils %}
+<div class="width ui-mt-20 ui-mb-40">
+    <div class="home-title">
+        <div class="home-title-name">友情链接<span>Friend Link</span></div>
+    </div>
+    
+    <div class="link">
+        {% home_link_list %}
+    </div>
+</div>
+<!--FriendLink部分结束-->
+<div class="footer">
+    <div class="width ui-row">
+        {% for_rp top="4" table="manager_categorymodel" where="followid=0 and isshow=1" order="catenum,cateid" %}
+            {% if not rp.cateid|stringformat:'i' == rp.sonid %}
+            <div class="footer_item">
+				<h4>{{rp.catename}}</h4>
+				<div class="footer_menu">
+					{% for_rs top="4" table="manager_categorymodel" where="followid={{rp.cateid}} and isshow=1" order="catenum,cateid" %}
+                    <a href="{% get_cate_home_url rs.cateid rs.catetype rs.cateurl %}" title="{{rs.catename}}"{% if rs.isblank == 1 %} target="_blank"{% endif %}>{{rs.catename}}</a>
+                    {% endfor_rs %}
+				</div>
+			</div>
+            {% endif %}
+		{% endfor_rp %}
+        <div class="footer_item footer_last">
+            {{webblock.foot_text|safe}}
+        </div>
+        
+        
+    </div>
+</div>
+<div class="copyright">{{ WEB_NAME }}　版权所有 © 2008-06 Inc.　<a href="https://beian.miit.gov.cn" target="_blank">{{ WEB_ICP }}</a>　<a href="" target="_blank"></a> <a href="{{BEIAN_LINE}}" target="_blank"><img src="{% static 'public/img/beian.png' %}" width="20" height="20" alt=""> {{ BEIAN_NUM }}</a>　<a href="" target="_blank"></a>　<a href="{% url 'home:sitemap' %}">网站地图</a></div>
+
+<div class="ui-sidebar">
+    <ul>
+        {% for_rs top="0" table="manager_plugservice" where="islock=1" order="ordnum,id" %}
+        <li><a href="http://wpa.qq.com/msgrd?v=3&uin={{rs.qq}}&site=qq&menu=yes" target="_blank"><i class="ui-icon-qq"></i></a><div>{{rs.title}}</div></li>
+        {% endfor_rs %}
+        <li><a href="/book.html"><i class="ui-icon-edit"></i></a><div>在线留言</div></li>
+        <li class="ui-backtop" id="backtop"><a href="javascript:;"><i class="ui-icon-top"></i></a><div>返回顶部</div></li>
+    </ul>
+</div>
+
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+<script src="{% static '/public/prism/prism.js' %}"></script>
+<script src="{% static '/home/js/cms.js' %}"></script>

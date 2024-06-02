@@ -1,0 +1,44 @@
+{% load utils %}
+
+{% include "home/include/top.html" %}
+
+<title>{{tagname}}_{{WEB_NAME}}</title>
+<meta name="keywords" content="{{SEO_KEY}}">
+<meta name="description" content="{{SEO_DESC}}">
+</head>
+
+<body>
+    {% include "home/include/head.html" %}
+
+	{% include "home/include/banner_inner.html" %}
+
+	<div class="container">
+		<div class="width ui-row">
+			<div class="container-left">
+				<div class="ui-fixed-s" data-parent=".container">
+					{% include "home/include/left_nav.html" %}
+				</div>
+			</div>
+			
+			<div class="container-right">
+			
+				<div class="ui-box">
+					<div class="ui-box-h2">{{catename}}</div>
+					<div class="ui-box-body">
+						<!--begin-->
+						{% for_rs pagesize="100" table="manager_tagsmodel" order="id desc" where="1=1" %}
+						<a href="{% url 'home:taglist' rs.id %}" title="{{ rs.title }}" target="_blank" class="ui-mb ui-mr ui-btn">{{ rs.title }}</a>
+						{% endfor_rs %}
+						
+						<!--over-->
+					</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+
+    {% include "home/include/foot.html" %}
+
+</body>
+</html>

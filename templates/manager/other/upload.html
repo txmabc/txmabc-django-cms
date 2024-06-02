@@ -1,0 +1,131 @@
+{% load static %}
+{% load manager_attachment_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>本地上传</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <link rel="stylesheet" href="{% static '/public/upload/css/style.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+    <script src="{% static '/public/admin/js/base.js' %}"></script>
+</head>
+<body class="ui-p-10">
+
+    <div class="ui-tabs ui-tabs-white" data-href="1">
+        <ul class="ui-tabs-nav">
+            <li><a
+                    href="/manager/upload/imagelist?multiple=0&islocal=1">附件选择</a>
+            </li>
+            <li class="active"><a href="javascript:;">本地上传</a></li>
+        </ul>
+        <div class="ui-tabs-content">
+            <div class="ui-tabs-pane active">
+                <!--loop-->
+                <div id="wrapper">
+
+                    <div id="container">
+                        <div id="uploader">
+                            <div class="statusBar" style="display:none;">
+                                <div class="progress">
+                                    <span class="text">0%</span>
+                                    <span class="percentage"></span>
+                                </div>
+                                <div class="info"></div>
+                                <div class="btns">
+                                    <div id="filePicker2"></div>
+                                    <div class="uploadBtn">开始上传</div>
+                                </div>
+                            </div>
+                            <div class="queueList">
+                                <div id="dndArea" class="placeholder">
+
+                                    <div class="ui-form-group" style="max-width:420px;margin:20px auto;">
+                                        <div class="ui-input-group">
+                                            <span class="before">上传至：</span>
+                                            <select name="gid" class="ui-form-ip radius-none">
+                                                <option value="0">未分组</option>
+                                                {% attachment_group %}
+                                            </select>
+                                            <div class="after" id="filePicker"></div>
+                                        </div>
+                                    </div>
+                                    <p>也可以将文件拖到这里，最多上传<code>
+                                        {% if multiple == 1 %}
+                                        50
+                                        {% else %}
+                                        1
+                                        {% endif %}
+                                    </code>个文件 <a
+                                            href="javascript:;" class="add-iframe ui-btn ui-btn-sm ui-ml">添加分组</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!--loop-->
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="piclist">
+    <input type="hidden" id="gourl" value="{{gid}}">
+    <script>
+        $(function () {
+            $("#gourl").val('{{gid}}');
+            $("select[name=gid]").change(function () {
+                var gid = $(this).find("option:selected").val();
+                $("#gourl").val(gid);
+            });
+            $(".add-iframe").click(function () {
+                $.dialogbox(
+                    {
+                        'title': "添加分组",
+                        'inputval': "",
+                        'inputholder': "请输入分组名称",
+                        'type': 1,
+                        'ok': function (e) {
+                            var val = e.inputval();
+                            if (val == '') {
+                                wmcms.error("分组名称不能为空");
+                            }
+                            else {
+                                $.ajax(
+                                    {
+                                        url: '{:url("addgroup")}',
+                                        type: 'post',
+                                        dataType: 'json',
+                                        data: "name=" + encodeURIComponent(val),
+                                        success: function (d) {
+                                            if (d.state == 'success') {
+                                                wmcms.success(d.msg);
+                                                setTimeout(function () { location.href = '{:url("imageupload")}'; }, 1000);
+                                            }
+                                            else {
+                                                wmcms.error(d.msg);
+                                            }
+                                        }
+                                    });
+                            }
+                        }
+                    });
+            });
+        })
+        var up_max = '512';
+        var up_limit = '{% if multiple == 1 %}50{% else %}1{% endif %}';
+        var up_server = "/manager/upload/uploadfile?type={{type}}&gid={{gid}}&iseditor={{iseditor}}&islocal={{islocal}}&thumb={{thumb}}&water={{water}}";
+        var token = ""
+    </script>
+    {% csrf_token %}
+    <script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
+    <script src="{% static '/public/upload/js/webuploader.js' %}"></script>
+    <script src="{% static '/public/upload/js/upload.js' %}"></script>
+</body>
+</html>

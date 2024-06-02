@@ -1,0 +1,14 @@
+{% load static %}
+<div class="ui-footbar ui-fixed-bottom ui-mwidth">
+    <div class="ui-footbar-left">
+        <a href="/"><i class="ui-icon-home"></i>首页</a>
+    </div>
+    <div class="ui-footbar-right">
+        <a href="javascript:;" class="ui-modal-show" data-target="#my-inquiry">询价</a>
+        {% if price %}<a href="javascript:;" class="ui-modal-show" data-target="#my-order">立即购买 <sub>￥</sub>{{price}}</a>{% endif %}
+    </div>
+</div>
+
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+<script src="{% static '/home/mobile/js/cms.js' %}"></script>

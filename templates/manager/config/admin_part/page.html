@@ -1,0 +1,95 @@
+{% load static %}
+{% load manager_part_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>页面权限</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/iframe.css' %}">
+<link rel="stylesheet" href="{% static '/public/ztree/css/zTreeStyle.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+<script src="{% static '/public/admin/js/base.js' %}"></script>
+<script src="{% static '/public/ztree/jquery.ztree.core-3.5.min.js' %}"></script>
+<script src="{% static '/public/ztree/jquery.ztree.excheck-3.5.min.js' %}"></script>
+
+<script>
+var setting={check:{enable:true},data:{simpleData:{enable:true}}};
+var zNodes=[
+{id:-1,pId:0,name:"全选/取消",open:true}
+{% page_menu %}
+]
+$(function(){
+	$.fn.zTree.init($("#tree"),setting,zNodes);
+});
+</script>
+</head>
+
+<body class="bg_white">
+    <div class="border_iframe">
+        <!---->
+        <form class="ui-form" method="post">
+            <div>
+                 <ul id="tree" class="ztree"></ul>
+            </div>
+            
+            <div class="ui-form-group ui-hide">
+                {% csrf_token %}
+                <button type="submit" id="wmcms-submit">保存</button>
+            </div>
+        </form>
+        <!---->
+    </div>
+<script>
+$(function()
+{
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	var backurl=window.parent.location;
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'bottom-center',
+		result:function(form)
+		{
+			var treeObj=$.fn.zTree.getZTreeObj("tree");
+			var nodes=treeObj.getCheckedNodes(true);
+			var str="";
+			for(var i=0;i<nodes.length;i++)
+			{
+				if(str==""){str=nodes[i].id}else{str+=","+nodes[i].id}
+			} 
+			var d0=str.replace("-1,","");
+            $.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',
+                url:'{% url "manager:part_page" id %}',
+                data:"page_list="+encodeURIComponent(d0),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){parent.location.href=backurl;},1000);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                    
+                }
+            });
+		}
+	});
+})
+</script>
+</body>
+</html>

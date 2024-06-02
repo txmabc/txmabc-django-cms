@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>修改密码</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+
+<body class="bg_white">
+	<div class="border_iframe">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">原密码：</label>
+                <div class="ui-col-9">
+                <input type="password" name="oldadminpass" class="ui-form-ip" maxlength="16" data-rule="原密码:required;password;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">新密码：</label>
+                <div class="ui-col-9">
+                <input type="password" name="adminpass" id="t1" class="ui-form-ip" maxlength="16" data-rule="新密码:required;password;">
+                </div>
+            </div>
+            <div class="ui-form-group ui-row">
+                <label class="ui-col-3 ui-col-form-label">确认密码：</label>
+                <div class="ui-col-9">
+                <input type="password" name="readminpass" class="ui-form-ip" maxlength="16" data-rule="确认新密码:required;password;match(t1)">
+                </div>
+            </div>
+            <div class="ui-form-group ui-hide">
+                {% csrf_token %}
+                <button type="submit" id="wmcms-submit">保存</button>
+            </div>
+        </form>
+        <!---->
+    </div>
+<script>
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+$(function()
+{
+	var backurl=window.parent.location;
+	$(".ui-form").form(
+	{
+		type:2,
+		align:'bottom-center',
+		result:function(form)
+		{
+			 $.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'/manager/index/pass',
+                headers: {'X-CSRFToken': csrftoken},
+                mode: 'same-origin',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                       	setTimeout(function(){parent.$.dialogclose();},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }  
+                }
+            });
+		}
+	});
+})
+</script>
+</body>
+</html>

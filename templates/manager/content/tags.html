@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>标签选择</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script src="{% static '/public/js/jquery.js' %}"></script>
+    <script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+<body>
+
+<body class="bg_white">
+
+	<div class="border_iframe">
+    	<input id="taglist" type="hidden" value="">
+
+        <ul class="tags">
+            {% if not page_obj %}
+            暂无标签可选
+            {% endif %}
+            {% for rs in page_obj %}
+            <li data-tags="{{rs.title}}">{{rs.title}}<i class="ui-icon-check"></i></li>
+            {% endfor %}
+        </ul>
+        {%if page_obj %}
+        <div class="ui-page ui-page-center ui-page-info">
+            <div class="ui-page-list">
+                <ul>
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page=1">首页</a></li>
+                        <li><a href="?page={{ page_obj.previous_page_number }}">上一页</a></li>
+                    {% endif %}
+                    <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">下一页</a></li>
+                        <li><a href="?page={{ page_obj.paginator.num_pages }}">末页</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+	$(function()
+	{
+		$(".tags li").click(function(){
+			if($(this).hasClass("hover"))
+			{
+				$(this).removeClass("hover");
+			}
+			else
+			{
+				$(this).addClass("hover");
+			}
+			gettag();
+		});
+	})
+	function gettag()
+	{
+		var i=0;
+		var str='';
+		$(".tags li").each(function()
+		{
+			if($(this).hasClass("hover"))
+			{
+				var tags=$(this).attr("data-tags");
+				if(i==0)
+				{
+					str=tags;
+				}
+				else
+				{
+					str=str+','+tags;
+				}
+				i=i+1;
+			}
+		})
+		$("#taglist").val(str);
+	}
+	</script>
+</body>
+</html>

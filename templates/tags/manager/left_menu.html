@@ -1,0 +1,11 @@
+{% load manager_menu_tags %}
+{% if menuitems %}
+    {% for item in menuitems %}
+        <div class="ui-collapse-menu-title" data-type="1"><a href="javascript:;">{{item.title}}</a><i class="ui-icon-right"></i>	</div>
+            <div class="ui-collapse-menu-body">
+                <ul>
+                    {% left_menu_children fid=item.id %}
+                </ul>
+        </div>
+    {% endfor %}
+{% endif %}

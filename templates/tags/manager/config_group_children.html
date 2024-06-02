@@ -1,0 +1,53 @@
+{% load manager_config_tags %}
+{% load utils %}
+
+{% for item in config_items %}
+    {% if item.ctype == 9 %}
+    <div class="form-subject">{{item.ctitle}}{% if item.dtext %}（{{item.text}}）{% endif %}</div>
+    {% else %}
+    <div class="ui-form-group ui-row">
+        <label class="col-left ui-col-form-label{% if item.ctype == 5 %} ui-col-form-label-top{% endif %}">{{item.ctitle}}：</label>
+        <div class="col-right{% if item.ctype == 6 or item.ctype == 7 and item.rtype == 1 %} col-right-top{% endif %}">
+            {% if item.ctype == 1 %}
+                <input type="text" name="{{item.ckey}}" class="ui-form-ip" value="{% if item.ishide == 1 %}*************{% else %}{{item.cvalue}}{% endif %}">
+            {% elif item.ctype == 2 %}
+                <input type="password" name="{{item.ckey}}" class="ui-form-ip" value="{% if item.ishide == 1 %}*************{% else %}{{item.cvalue}}{% endif %}">
+            {% elif item.ctype == 4 %}
+                <div class="ui-input-group">
+                    <input type="text" name="{{item.ckey}}" class="ui-form-ip radius-right-none" id="{{item.ckey}}" value="{{item.cvalue}}">
+                    <a class="after fm-choose ui-icon-cloud-upload radius-none" data-name="{{item.ckey}}" {% if item.ckey == 'water_logo' %}data-url="{U('upload/imageupload','type='.$rs[utype].'&multiple=0&islocal=1')}"{% else %}data-url="{% url 'manager:upload_imageupload' type=item.utype multiple=0 %}"{% endif %} data-type="{{item.utype}}" data-multiple="0" title="上传">上传</a>
+                    <a class="after fm-choose ui-icon-select{% if item.utype == 1 %} radius-none{% endif %}" data-name="{{item.ckey}}" data-url="{% if item.ckey == 'water_logo' %}{U('upload/imagelist','type='.$rs[utype].'&multiple=0&islocal=1')}{% else %}{% url 'manager:upload_imagelist' type=item.utype multiple=0 %}{% endif %}" data-type="{{item.utype}}" data-multiple="0" title="选择">选择</a>
+                    {% if item.utype == 1 %}<a class="after ui-lightbox ui-icon-zoomin" data-id="{{item.ckey}}" data-name="lightbox-{{item.ckey}}" title="{{item.ctitle}}">预览</a>{% endif %}
+                </div>
+            {% elif item.ctype == 5 %}
+                <textarea name="{{item.ckey}}" class="ui-form-ip" rows="3" cols="50">{% if item.ishide == 1 %}*************{% else %}{{item.cvalue}}{% endif %}</textarea>
+            {% elif item.ctype == 6 %}
+                {% for citem in item.dvalue|split:"," %}
+                        {% with citem|split:"|" as data %}
+                        <label class="ui-radio"><input type="radio" name="{{item.ckey}}" id="{{item.ckey}}_{{forloop.counter}}" value="{{data.1}}" {% if data.1 == item.cvalue %} checked{% endif %}><i></i>{{data.0}}</label>
+                        {% endwith %}
+                {% endfor %}
+            {% elif item.ctype == 7 %}
+                <div class="input-group-check">
+                    {% for citem in item.dvalue|split:"," %}
+                        {% if item.rtype == 2 %}<div class="input-group-check">{% endif %}
+                        {% with citem|split:"|" as data %}
+                        <label class="ui-checkbox"><input type="checkbox" name="{{item.ckey}}" id="{{item.ckey}}_{{forloop.counter}}" value="{{data.1}}" {% if ",{data.1}," in ",{item.cvalue}," %} checked{% endif %}><i></i>{{data.0}}</label>
+                        {% endwith %}
+                        {% if item.rtype == 2 %}</div>{% endif %}
+                    {% endfor %}
+                </div>
+            {% elif item.ctype == 8 %}
+                <select name="{{item.ckey}}" class="ui-form-ip">
+                <!-- {php $arr=explode(",",$rs[dvalue])}
+                {foreach $arr as $index=>$key}
+                {php $data=explode("|",$key)}
+                <option value="{$data[1]}" {if $rs[cvalue]=="".$data[1].""} selected{/if}>{$data[0]}</option>
+                {/foreach} -->
+                </select>
+            {% endif %}
+            {% if item.dtext %}<span class="input-tips">{{item.dtext}}</span>{% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}

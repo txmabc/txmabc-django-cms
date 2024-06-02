@@ -1,0 +1,24 @@
+{% load home_navigation_tags %}
+{% load utils %}
+
+{% if not cate_items %}
+	<div class="ui-collapse-menu-title active">
+		<a href="{{ topid|cateurl }}">{% get_cate_info topid 'catename' %}</a>
+	</div>
+{% endif %}
+{% for item in cate_items %}
+		<div class="ui-collapse-menu-title {% is_active item.cateid parentid 'active' 1 %}">
+			<a href="{{ item.cateid|cateurl }}" title="{{item.catename}}">{{item.catename}}</a>{% if item.children %}<i class="ui-icon-right"></i>{% endif %}
+		</div>
+		{% if item.children %}
+		<div class="ui-collapse-menu-body {% is_active item.cateid parentid 'show' 1 %}">
+			<ul>
+				{% for citem in item.children %}
+				{% autoescape off %}
+				<li{% is_active citem.cateid parentid 'active' %}><a href="{{ citem.cateid|cateurl }}" title="{{citem.catename}}"{% if citem.isblank == 1 %} target="_blank"{% endif %}><i class="ui-icon-square ui-font-14 ui-mr"></i>{{citem.catename}}</a></li>
+				{% endautoescape %}
+				{% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+{% endfor %}

@@ -1,0 +1,7 @@
+{% load manager_part_tags %}
+{% if menuitems %}
+    {% for item in menuitems %}
+        ,{id:{{item.id}},pId:-1,name:"{{item.title}}",open:true{% if item.id in page_list %},checked:true{% endif %}}
+        {% page_menu_children fid=item.id %}
+    {% endfor %}
+{% endif %}

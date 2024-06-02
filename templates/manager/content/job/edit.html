@@ -1,0 +1,318 @@
+{% load static %}
+{% load manager_category_tags %}
+{% load manager_user_tags %}
+{% load utils %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <title>添加内容</title>
+    <link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+    <link rel="stylesheet" href="{% static '/public/select/select.css' %}">
+    <link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+    <script>var api_url = "/manager/upload/imagelist/?type=3&multiple=1";</script>
+    <script src="{% static 'public/js/jquery.js' %}"></script>
+    <script src="{% static 'public/js/ui.js' %}"></script>
+    <script src="{% static 'public/select/select.js' %}"></script>
+    <script src="{% static 'public/js/dropzone.js' %}"></script>
+    <script src="{% static 'public/js/sortable.min.js' %}"></script>
+    <script src="{% static '/public/tinymce/tinymce.min.js' %}"></script>
+    <script src="{% static 'public/admin/js/base.js' %}"></script>
+</head>
+
+<body>
+
+    <div class="position">当前位置：<a href="/manager/content/lists">内容管理</a>{% if classid > 0 %}{{classid|get_page_postion|safe}}{% endif %}</div>
+    <div class="borders">
+        <!---->
+        <form class="ui-form" method="post">
+            <div class="ui-tabs ui-tabs-white">
+                <ul class="ui-tabs-nav">
+                    <li class="active"><a href="javascript:void(0)">基本设置</a></li>
+                    <li><a href="javascript:void(0)">SEO设置</a></li>
+                    <li><a href="javascript:void(0)">可选设置</a></li>
+                </ul>
+
+                <div class="ui-tabs-content">
+                    <div class="ui-tabs-pane active">
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">职位名称：</label>
+                            <div class="col-right">
+                                <input type="text" name="title" id="title" class="ui-form-ip" maxlength="255" value="{{title}}" data-rule="职位名称:required;">
+                            </div>
+                        </div>          
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">工作地点：</label>
+                            <div class="col-right">
+                                <input type="text" name="work_address" id="work_address" class="ui-form-ip" maxlength="50" value="{{work_address}}" data-rule="工作地点:required;">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">工作性质：</label>
+                            <div class="col-right">
+                                <select name="work_nature" id="work_nature" class="ui-form-ip" data-rule="工作性质:required;">
+                                    <option value="">请选择工作性质</option>
+                                    <option value="全职" {% if work_nature == '全职'%}selected{% endif %}>全职</option>
+                                    <option value="兼职" {% if work_nature == '兼职'%}selected{% endif %}>兼职</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">学历要求：</label>
+                            <div class="col-right">
+                                <select name="work_education" id="work_education" class="ui-form-ip" data-rule="学历要求:required;">
+                                    <option value="">请选择学历要求</option>
+                                    <option value="不限">不限</option>
+                                    <option value="高中及以上" {% if work_education == '高中及以上'%}selected{% endif %}>高中及以上</option>
+                                    <option value="大专及以上" {% if work_education == '大专及以上'%}selected{% endif %}>大专及以上</option>
+                                    <option value="本科及以上" {% if work_education == '本科及以上'%}selected{% endif %}>本科及以上</option>
+                                    <option value="研究生及以上" {% if work_education == '研究生及以上'%}selected{% endif %}>研究生及以上</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">薪资待遇：</label>
+                            <div class="col-right">
+                                <select name="work_money" id="work_money" class="ui-form-ip" data-rule="薪资待遇:required;">
+                                    <option value="">请选择薪资待遇</option>
+                                    <option value="面议" selected>面议</option>
+                                    <option value="2000-3000元/月" {% if work_money == '2000-3000元/月'%}selected{% endif %}>2000-3000元/月</option>
+                                    <option value="3000-5000元/月" {% if work_money == '3000-5000元/月'%}selected{% endif %}>3000-5000元/月</option>
+                                    <option value="5000-8000元/月" {% if work_money == '5000-8000元/月'%}selected{% endif %}>5000-8000元/月</option>
+                                    <option value="8000-10000元/月" {% if work_money == '8000-10000元/月'%}selected{% endif %}>8000-10000元/月</option>
+                                    <option value="10000-20000元/月" {% if work_money == '10000-20000元/月'%}selected{% endif %}>10000-20000元/月</option>
+                                    <option value="20000-50000元/月" {% if work_money == '20000-50000元/月'%}selected{% endif %}>20000-50000元/月</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">工作年限：</label>
+                            <div class="col-right">
+                                <select name="work_age" id="work_age" class="ui-form-ip" data-rule="工作年限:required;">
+                                    <option value="">请选择工作年限</option>
+                                    <option value="不限" {% if work_age == '不限'%}selected{% endif %}>不限</option>
+                                    <option value="1年及以上" {% if work_age == '1年及以上'%}selected{% endif %}>1年及以上</option>
+                                    <option value="2年及以上" {% if work_age == '2年及以上'%}selected{% endif %}>2年及以上</option>
+                                    <option value="3年及以上" {% if work_age == '3年及以上'%}selected{% endif %}>3年及以上</option>
+                                    <option value="4年及以上" {% if work_age == '4年及以上'%}selected{% endif %}>4年及以上</option>
+                                    <option value="5年及以上" {% if work_age == '5年及以上'%}selected{% endif %}>5年及以上</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">招聘人数：</label>
+                            <div class="col-right">
+                                <select name="work_num" id="work_num" class="ui-form-ip" data-rule="招聘人数:required;">
+                                    <option value="">请选择招聘人数</option>
+                                    <option value="若干" {% if work_num == '若干'%}selected{% endif %}>若干</option>
+                                    <option value="1" {% if work_num == '1'%}selected{% endif %}>1</option>
+                                    <option value="2" {% if work_num == '2'%}selected{% endif %}>2</option>
+                                    <option value="3" {% if work_num == '3'%}selected{% endif %}>3</option>
+                                    <option value="4" {% if work_num == '4'%}selected{% endif %}>4</option>
+                                    <option value="5" {% if work_num == '5'%}selected{% endif %}>5</option>
+                                    <option value="6" {% if work_num == '6'%}selected{% endif %}>6</option>
+                                    <option value="7" {% if work_num == '7'%}selected{% endif %}>7</option>
+                                    <option value="8" {% if work_num == '8'%}selected{% endif %}>8</option>
+                                    <option value="9" {% if work_num == '9'%}selected{% endif %}>9</option>
+                                    <option value="10" {% if work_num == '10'%}selected{% endif %}>10</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">工作内容：</label>
+                            <div class="col-right-full">
+                                <textarea id="content" name="content" class="tinymce-textarea" >{{ content }}</textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">任职要求：</label>
+                            <div class="col-right-full">
+                                <textarea id="intro" name="intro" class="tinymce-textarea">{{ intro }}</textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">标签：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> <input type="text" name="tags" id="tags" class="ui-form-ip radius-right-none"
+                                        maxlength="255" value="{{tags}}"> <a class="after ui-icon-select fm-tags" data-name="tags"
+                                        data-url="/manager/content/taglist/" title="选择">选择</a> </div> <span
+                                    class="input-tips">多个标签请使用英文逗号隔开，不能超过10个</span>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+							<label class="col-left ui-col-form-label">阅读权限：</label>
+							<div class="col-right col-right-top">
+								{% user_group_view_lever %}
+							</div>
+						</div>
+                    </div>
+                    <div class="ui-tabs-pane">
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">优化标题：</label>
+                            <div class="col-right">
+                                <input type="text" name="seotitle" id="seotitle" class="ui-form-ip" maxlength="255"
+                                    value="{{ seotitle }}">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">关键字：</label>
+                            <div class="col-right">
+                                <textarea name="seokey" class="ui-form-ip" id="seokey" rows="3" cols="50">{{ seokey }}</textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">描述：</label>
+                            <div class="col-right">
+                                <textarea name="seodesc" class="ui-form-ip" id="seodesc" rows="3" cols="50">{{ seodesc }}</textarea>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">别名：</label>
+                            <div class="col-right">
+                                <input type="text" name="alias" id="alias" class="ui-form-ip" maxlength="50" value=" {{ alias }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui-tabs-pane">
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">外链：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> 
+                                    <input type="text" name="url" id="url" class="ui-form-ip radius-right-none" maxlength="255" value="{{ url }}"> 
+                                    <a class="after fm-choose ui-icon-cloud-upload radius-none" data-name="url" data-url="/manager/upload/imageupload/?type=3&multiple=0&thumb=0&water=0.html" data-type="0" data-multiple="0" title="上传">上传</a> 
+                                    <a class="after fm-choose ui-icon-select" data-name="url" data-url="/manager/upload/imagelist/?type=3" data-type="3" data-multiple="0" title="选择">选择</a> 
+                                </div> 
+                                <span class="input-tips">添加外链时，将不显示正文内容</span>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">人气：</label>
+                            <div class="col-right">
+                                <input type="text" name="hits" id="hits" class="ui-form-ip" maxlength="10" value="{{ hits }}">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">赞数量：</label>
+                            <div class="col-right">
+                                <input type="text" name="upnum" id="upnum" class="ui-form-ip" maxlength="10" value="{{ upnum }}">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">踩数量：</label>
+                            <div class="col-right">
+                                <input type="text" name="downnum" id="downnum" class="ui-form-ip" maxlength="10"
+                                    value="{{ downnum }}">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">排序：</label>
+                            <div class="col-right">
+                                <input type="text" name="ordnum" id="ordnum" class="ui-form-ip" maxlength="10"
+                                    value="{{ ordnum }}"> <span class="input-tips">数字越大越靠前</span>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">置顶：</label>
+                            <div class="col-right col-right-top">
+                                <label class="ui-radio"><input type="radio" name="ontop" value="0" {% if ontop == 0 %} checked {% endif %}><i></i>否</label> 
+                                <label class="ui-radio"><input type="radio" name="ontop" value="1" {% if ontop == 1 %} checked {% endif %}><i></i>是</label>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">推荐：</label>
+                            <div class="col-right col-right-top">
+                                <label class="ui-radio"><input type="radio" name="isnice" value="0" {% if isnice == 0 %} checked {% endif %}><i></i>否</label> 
+                                <label class="ui-radio"><input type="radio" name="isnice" value="1" {% if isnice == 1 %} checked {% endif %}><i></i>是</label>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">定时发布：</label>
+                            <div class="col-right col-right-top">
+                                <label class="ui-radio"><input type="radio" name="isauto" value="0" {% if isauto == 0 %} checked {% endif %}><i></i>否</label>
+                                <label class="ui-radio"><input type="radio" name="isauto" value="1" {% if isauto == 1 %} checked {% endif %}><i></i>是</label>
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">发布日期：</label>
+                            <div class="col-right">
+                                <input type="text" name="createdate" id="createdate" class="ui-form-ip datepick-time"
+                                    value="{{ createdate|fromunix }}">
+                            </div>
+                        </div>
+                        <div class="ui-form-group ui-row">
+                            <label class="col-left ui-col-form-label">内容页模板：</label>
+                            <div class="col-right">
+                                <div class="ui-input-group"> 
+                                    <input type="text" name="showskin" id="showskin" class="ui-form-ip radius-right-none" maxlength="255" value="{{ showskin }}"> 
+                                    <a class="after ui-icon-select template" data-name="showskin" data-url="/manager/theme/template.html" title="选择">选择</a> </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-form-group ui-mt">
+                {% csrf_token %}
+                <button type="submit" class="ui-btn ui-btn-info ui-mr-sm">保存</button>
+                <button type="button" class="ui-btn ui-back">返回</button>
+            </div>
+        </form>
+        <!---->
+    </div>
+    <script src="{% static '/public/datepick/laydate.js' %}"></script>
+    <script src="{% static '/public/admin/js/tinymce_auto.js' %}"></script>
+    <script>
+        $(function () {
+
+            $('.selectbox').SumoSelect(
+                {
+                    csvDispCount: 4,
+                    captionFormat: '已选择：{0} 个',
+                });
+
+            lay('.datepick').each(function () {
+                laydate.render(
+                    {
+                        elem: this,
+                        trigger: 'click'
+                    });
+            });
+            lay('.datepick-time').each(function () {
+                laydate.render(
+                    {
+                        elem: this,
+                        type: 'datetime',
+                        trigger: 'click'
+                    });
+            });
+            $(".ui-form").form(
+                {
+                    type: 2,
+                    result: function (form) {
+                        $.ajax(
+                            {
+                                type: 'post',
+                                cache: false,
+                                dataType: 'json',
+                                url: '/manager/job/edit/?classid={{classid}}&id={{id}}',
+                                data: $(form).serialize(),
+                                error: function (e) { alert(e.responseText); },
+                                success: function (d) {
+                                    if (d.state == 'success') {
+                                        wmcms.success(d.msg);
+                                        setTimeout(function () { location.href = '/manager/content/lists?classid={{classid}}'; }, 1500);
+                                    }
+                                    else {
+                                        wmcms.error(d.msg);
+                                    }
+                                }
+                            });
+                    }
+                });
+        })
+    </script>
+</body>
+</html>

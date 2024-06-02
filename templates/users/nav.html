@@ -1,0 +1,18 @@
+<div class="ui-box ui-box-radius">
+	<div class="ui-box-title">会员中心<span>member center</span></div>
+	<div class="ui-box-nav ui-collapse-menu">
+		{% if not request.session.user_info.id %}
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'register' %} active{% endif %}"><a href="{% url 'users:register' %}">会员注册</a></div>
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'login' %} active{% endif %}"><a href="{% url 'users:login' %}">会员登录</a></div>
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'getpass' %} active{% endif %}"><a href="{% url 'users:getpass' %}">忘记密码</a></div>
+		{% else %}
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'index' %} active{% endif %}"><a href="{% url 'users:index' %}">个人中心</a></div>
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'myorder' %} active{% endif %}"><a href="{% url 'users:myorder' %}">我的订单</a></div>
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'mymoney' %} active{% endif %}"><a href="{% url 'users:mymoney' %}">财务明细</a></div>
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'editemail' %} active{% endif %}"><a href="{% url 'users:editemail' %}">修改邮箱</a></div>
+			<div class="ui-collapse-menu-title {% if request.resolver_match.url_name == 'editpass' %} active{% endif %}"><a href="{% url 'users:editpass' %}">修改密码</a></div>
+			<div class="ui-collapse-menu-title"><a href="{% url 'users:logout' %}">退出登录</a></div>
+		{% endif %}
+	</div>
+</div>
+

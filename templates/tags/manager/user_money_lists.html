@@ -1,0 +1,55 @@
+{% load manager_user_tags %}
+{% load utils %}
+<table class="ui-table ui-table-border ui-table-hover ui-table-striped ui-mb">
+    <thead class="ui-thead-gray">
+        <tr>
+            <th width="80">ID</th>
+            <th>名称|流水号</th>
+            <th width="180">会员</th>
+            <th width="120">变更前</th>
+            <th width="120">金额</th>
+            <th width="120">变更后</th>
+            <th width="80">性质</th>
+            <th width="150">日期</th>
+            <th width="80">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% if not page_obj %}
+        <tr>
+            <td colspan="9">暂无资料</td>
+        </tr>
+    {% endif %}
+    {% for item in page_obj %}
+    <tr>
+        <td>{{item.aid}}</td>
+        <td class="ui-text-left">{{item.title}}</td>
+        <td class="ui-text-left"><a href="{{item.uface}}" class="ui-lightbox" data-title="{{item.uname}}"><img src="{{item.uface}}" width="40" height="40" class="ui-mr"></a><a href="{U('user/gouser',"id=".$rs[id]."")}" target="_blank">{{item.uname}}</a></td>
+        <td>{{item.oldmoney}}</td>
+        <td>{% if item.types == 1 %} + {% else %} - {% endif %} {{item.amount}}</td>
+        <td>{{item.newmoney}}</td>
+        <td>{% if item.types == 1 %} 收入 {% else %} <em>支出</em> {% endif %} {{item.amount}}</td>
+        <td>{{item.createdate|fromunix:"%Y-%m-%d %H:%I"}}</td>
+        <td><a href="javascript:;" class="del" data-url="{% url 'manager:usermoney_del' item.aid %}">删除</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{%if page_obj %}
+    <div class="ui-page ui-page-right ui-page-info">
+        <div class="ui-page-list">
+            <ul>
+                {% if page_obj.has_previous %}
+                    <li><a href="?fid={{ fid }}&page=1">首页</a></li>
+                    <li><a href="?fid={{ fid }}&page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% endif %}
+
+                <li><a>{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</a></li>
+            {% if page_obj.has_next %}
+                <li><a href="?fid={{ fid }}&page={{ page_obj.next_page_number }}">下一页</a></li>
+                <li><a href="?fid={{ fid }}&page={{ page_obj.paginator.num_pages }}">末页</a></li>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+{% endif %}

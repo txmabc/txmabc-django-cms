@@ -1,0 +1,12 @@
+Django~=5.0.6
+django-treebeard~=4.7
+django-debug-toolbar~=4.2.0
+djangorestframework~=3.14.0 
+django-cors-headers~=4.3.0
+django-simple-captcha~=0.5.20
+mysqlclient~=2.2.0
+PyJWT~=2.8.0
+coreapi~=2.3.3
+drf-yasg~=1.21.7
+drf-spectacular~=0.27.1
+drf-spectacular-sidecar~=2024.2.1

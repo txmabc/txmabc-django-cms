@@ -1,0 +1,47 @@
+{% load utils %}
+{% include "home/include/top.html" %}
+<title>{{catename}}_{{WEB_NAME}}</title>
+<meta name="keywords" content="{{SEO_KEY}}">
+<meta name="description" content="{{SEO_DESC}}">
+</head>
+
+<body>
+    {% include "home/include/head.html" %}
+	{% include "home/include/banner_inner.html" %}
+
+	<div class="container">
+		<div class="width ui-row">
+			<div class="container-left">
+				<div class="ui-fixed-s" data-parent=".container">
+					{% include "home/include/left_nav.html" %}
+				</div>
+			</div>
+			
+			<div class="container-right">
+			
+				<div class="ui-box">
+					<div class="ui-box-h2">{{catename}}</div>
+					<div class="ui-box-body">
+						<!--begin-->
+                        {% for_rp top="0" table="manager_categorymodel" where="followid=0 and isshow=1" order="catenum,cateid" %}
+                            <div class="ui-menu">
+                                <div class="ui-menu-name"><a href="{% get_cate_home_url rp.cateid rp.catetype rp.cateurl %}" title="{{rp.catename}}"{% if rp.isblank == 1 %} target="_blank"{% endif %}>{{rp.catename}}</a></div>
+                            </div>
+                            <div class="ui-mt-20">
+                                {% for_rs top="0" table="manager_categorymodel" where="followid={{rp.cateid}} and isshow=1" order="catenum,cateid" %}
+                                <a href="{% get_cate_home_url rs.cateid rs.catetype rs.cateurl %}" title="{{rs.catename}}"{% if rs.isblank == 1 %} target="_blank"{% endif %} class="ui-btn ui-mr ui-mb">{{rs.catename}}</a>
+                                {% endfor_rs %}
+                            </div>
+                        {% endfor_rp %}
+						<!--over-->
+					</div>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+	
+    {% include "home/include/foot.html" %}
+
+</body>
+</html>

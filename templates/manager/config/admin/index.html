@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<title>后台用户</title>
+<link rel="stylesheet" href="{% static '/public/css/ui.css' %}">
+<link rel="stylesheet" href="{% static '/public/admin/css/layout.css' %}">
+<script src="{% static '/public/js/jquery.js' %}"></script>
+<script src="{% static '/public/js/ui.js' %}"></script>
+</head>
+<body>
+
+<div class="position">当前位置：网站管理 > <a href="{% url 'manager:admin_index' %}">后台用户</a></div>
+<div class="border">
+    <!---->
+    <a href="javascript:;" data-url="{% url 'manager:admin_add' %}" class="add-iframe ui-btn ui-btn-info">添加用户</a>
+    <form method="post" class="ui-form">
+    <div class="ui-table-wrap">
+    <table class="ui-table ui-table-border ui-table-hover ui-table-striped ui-mt ui-mb">
+        <thead class="ui-thead-gray">
+            <tr>
+                <th width="80">ID</th>
+                <th>用户名</th>
+                <th width="120">登录次数</th>
+                <th width="180">最后登录日期</th>
+                <th width="120">部门</th>
+                <th width="80">状态</th>
+                <th width="100">只读模式</th>
+                <th width="100">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if not admin_items %}
+        <tr>
+            <td colspan="8">暂无资料</td>
+        </tr>
+        {% endif %}
+        {% if admin_items %}   
+            {% for item in admin_items %}
+                <tr>
+                    <td>{{item.adminid}}</td>
+                    <td class="ui-text-left">{{item.adminname}}</td>
+                    <td>{{item.logintimes}}</td>
+                    <td>{{item.lastlogindate|default_if_none:""}}</td>
+                    <td>{% if item.pid == 0 %}超级管理员{% else %}{{item.title}}{% endif %}</td>
+                    <td><label class="ui-switch ui-switch-info"><input type="checkbox" {% if item.islock == 1 %} checked{% endif %} data-url="{% url 'manager:admin_switchs' type=1 id=item.adminid %}"><span class="ui-switch-checkbox ui-switch-text"></span></label></td>
+                    <td><label class="ui-switch ui-switch-info"><input type="checkbox" {% if item.readonly == 1 %} checked{% endif %} data-url="{% url 'manager:admin_switchs' type=2 id=item.adminid %}"><span class="ui-switch-checkbox ui-switch-text"></span></label></td>
+                    <td class="ui-text-right">　<a href="javascript:;" data-url="{% url 'manager:admin_edit' item.adminid %}" class="edit-iframe"><span class="ui-icon-edit"></span> 编辑</a>　<a href="javascript:;" class="del" data-url="{% url 'manager:admin_del' item.adminid %}"><span class="ui-icon-delete"></span> 删除</a></td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+    </table>
+    </div>
+	{% csrf_token %}
+    </form>
+    <!---->
+</div>
+
+<script>
+$(function()
+{
+	const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+	$(".add-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"添加用户",
+			'text':url,
+			'width':'560px',
+			'height':'410px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	$(".edit-iframe").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialogbox(
+		{
+			'title':"编辑用户",
+			'text':url,
+			'width':'560px',
+			'height':'440px',
+			'type':3,
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				e.iframe().contents().find("#wmcms-submit").click();
+			}
+		});
+	});
+	
+	$('.ui-switch input[type=checkbox]').on('click',function()
+	{
+		var url=$(this).attr("data-url");
+		var result=($(this).is(':checked'))?1:0;
+		$.ajax(
+		{
+			url:url,
+			type:"post",
+			dataType:'json',
+			headers: {'X-CSRFToken': csrftoken},
+            mode: 'same-origin',
+			data:"state="+result,
+			error:function(e){alert(e.responseText);},
+			success:function(d)
+			{
+				if(d.state=='success')
+				{
+					wmcms.success(d.msg);
+				}
+				else
+				{
+					wmcms.error(d.msg);
+				}
+			}
+		});
+	});
+	
+	$(".ui-form").form(
+	{
+		type:2,
+		result:function(form)
+		{
+			$.ajax(
+			{
+                type:'post',
+                cache:false,
+                dataType:'json',
+                url:'{% url "manager:admin_index" %}',
+                data:$(form).serialize(),
+                error:function(e){alert(e.responseText);},
+                success:function(d)
+                {
+                    if(d.state=='success')
+                    {
+                        wmcms.success(d.msg);
+                        setTimeout(function(){location.href='{% url "manager:admin_index" %}';},1500);
+                    }
+                    else
+                    {
+                        wmcms.error(d.msg);
+                    }
+                }
+            });
+		}
+	});
+	$(".del").click(function()
+	{
+		var url=$(this).attr("data-url");
+		$.dialog(
+		{
+			'title':"操作提示",
+			'text':"确定要删除？不可恢复！",
+			'oktheme':'ui-btn-info',
+			'ok':function(e)
+			{
+				$.ajax(
+				{
+                    url:url,
+					type:'post',
+					dataType:'json',
+					headers: {'X-CSRFToken': csrftoken},
+            		mode: 'same-origin',
+					error:function(e){alert(e.responseText);},
+                    success:function(d)
+                    {
+                        e.close();
+                        if(d.state=='success')
+                        {
+                            wmcms.success(d.msg);
+                            setTimeout(function(){location.href='{% url "manager:admin_index" %}';},1000);
+                        }
+                        else
+                        {
+                            wmcms.error(d.msg);
+                        }
+                    }
+                });
+			}
+		});
+    });
+})
+</script>
+</body>
+</html>

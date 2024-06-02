@@ -1,0 +1,37 @@
+{% load utils %}
+<div class="proshow ui-row">
+	<div class="col-left">
+		{% if picdata %}
+		{% with picdata.0 as big %}
+		<div class="big_pic"><a href="{{ big.image }}" class="ui-lightbox" data-hide="true"><img src="{{ big.image }}" alt="{{ big.dsec }}" border="0" ></a></div>
+		{% endwith %}
+        <div class="thumb_pic">
+			<ul>
+				{% for val in picdata %}
+				<li{% if forloop.counter == 1 %} class="active"{% endif %}><img src="{% thumb val.image 60 60 %}" data-url="{{val.image}}" alt="{{val.desc}}" width="56" height="56"></li>
+				{% endfor %}
+			</ul>
+		</div>
+		{% endif %}
+	</div>
+	<div class="col-right">
+		<h1>{{title}}</h1>
+		{% if intro %}<div class="intro">{{intro}}</div>{% endif %}
+		{% if price %}
+			<div class="price"><span>{{price}}</span><em>元</em></div>
+		{% endif %}
+		<div class="action">
+			<button class="ui-btn ui-btn-blue ui-modal-show" data-target="#my-inquiry">我要询价</button>
+			{% if price %}<button class="ui-btn ui-btn-yellow ui-ml ui-modal-show" data-target="#my-order">我要订购</button>{% endif %}
+		</div>
+		
+		{% if tagslist %}
+		<div class="tags">
+			<i class="ui-icon-tags"></i> 标签：
+			{% for rs in tagslist %}
+				<a href="{{ rs.url }}" title="{{ rs.name }}" target="_blank" class="ui-btn ui-btn-sm">{{ rs.name }}</a>
+			{% endfor %}
+		</div>
+		{% endif %}
+	</div>
+</div>
