@@ -35,17 +35,17 @@ def taglist(request, id:int):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "home/taglist.html", locals())
+    return my_render(request, "taglist.html", locals())
 
 def sitemap(request):
     catename = "网站地图"
     encatename = "sitemap"
-    return render(request, "home/sitemap.html", locals())
+    return my_render(request, "sitemap.html", locals())
 
 def tags(request):
     catename = "标签"
     encatename = "tags"
-    return render(request, "home/tags.html", locals())
+    return my_render(request, "tags.html", locals())
 
 class InquiryView(View):
     def post(self, request):

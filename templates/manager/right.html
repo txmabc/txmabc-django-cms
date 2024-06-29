@@ -46,7 +46,21 @@
                 <div class="total">待处理：<span class="red">{{ data.book.num }}</span></div>
                 <div class="icon icon-4"><span class="ui-icon-comment"></span></div>
             </a>
-        </div>            
+        </div>
+        <div class="ui-row ui-mt-20 homeother">
+            <div class="ui-col-12">
+                <!---->
+                <div class="box">
+                    <div class="subject">服务器环境</div>
+                    <ul class="ui-list server">
+                        {% for item in services %}
+                        <li><a><span>{{item.label}}：</span>{{item.value}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <!---->
+            </div>
+        </div>         
     </div>
 
     <div class="foottop"></div>

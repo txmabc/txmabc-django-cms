@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.views import View
 from manager.models import Admin, AdminMenu
 from django.contrib.auth.hashers import make_password, check_password
+import sys
+import django
 
 def index(request):
     return render(request, "manager/index.html", locals())
@@ -32,6 +34,21 @@ def right(request):
             "num" : 354
         }
     }
+    services = [
+        {
+            "label": "运行平台",
+            "value": sys.platform,
+        },
+        {
+            "label": "解释器的版本",
+            "value": sys.version,
+        },
+        {
+            "label": "django的版本",
+            "value": django.get_version,
+        },
+    ]
+
     return render(request, "manager/right.html", locals())
 
 class PassView(View):

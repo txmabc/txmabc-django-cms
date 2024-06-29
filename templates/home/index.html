@@ -36,38 +36,6 @@
 
     <div class="width ui-mt-20 ui-mb-40">
 		<div class="home-title">
-            
-			<div class="home-title-name">产品展示<span>Products</span></div>
-			<div class="home-title-more">
-                <a href="{% url 'home:pro_list' 12 %}" class="active">全部</a>
-                {% for_rs top="8" table="manager_categorymodel" where="followid=12" order="catenum,cateid" %}
-                <a href="{% url 'home:pro_list' rs.cateid %}" title="{{rs.catename}}">{{rs.catename}}</a>
-                {% endfor_rs %}
-            </div>
-		</div>
-		
-		<div class="ui-piclist ui-piclist-col-4 ui-piclist-3-2 ui-piclist-100">
-            {% get_sonid_all 12 %}
-			{% for_rs top="4" table="manager_modelpromodel" join="left join manager_contentmodel on manager_modelpromodel.cid=manager_contentmodel.id" where="islock=1 and classid in({{subs}}) and isnice=1" order="ontop desc,ordnum desc,id desc" %}
-            <div class="ui-piclist-item">
-				<div class="ui-piclist-image"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}"><img src="{% thumb rs.pic 400 400 %}" alt="{{rs.title}}" /></a></div>
-				<div class="ui-piclist-body">
-                    <div class="ui-piclist-flex">
-                        <div class="ui-piclist-title ui-text-center ui-text-hide"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}">{{rs.title}}</a></div>
-                        {% if rs.price %}
-                        <div class="ui-piclist-price"><strong>￥{{rs.price}}</strong></div>
-                        {% else %}
-                        <div class="ui-piclist-price"><strong>免费</strong></div>
-                        {% endif %}
-                    </div>
-				</div>
-			</div>
-			{% endfor_rs %}
-		</div>
-	</div>
-    
-    <div class="width ui-mt-20 ui-mb-40">
-		<div class="home-title">
 			<div class="home-title-name">新闻资讯<span>News</span></div>
             <div class="home-title-more">
                 <a href="{% url 'home:news_list' 3 %}" class="active">全部</a>
@@ -103,6 +71,40 @@
 		<!--news over-->
 
 	</div>
+
+    <div class="width ui-mt-20 ui-mb-40">
+		<div class="home-title">
+            
+			<div class="home-title-name">产品展示<span>Products</span></div>
+			<div class="home-title-more">
+                <a href="{% url 'home:pro_list' 12 %}" class="active">全部</a>
+                {% for_rs top="8" table="manager_categorymodel" where="followid=12" order="catenum,cateid" %}
+                <a href="{% url 'home:pro_list' rs.cateid %}" title="{{rs.catename}}">{{rs.catename}}</a>
+                {% endfor_rs %}
+            </div>
+		</div>
+		
+		<div class="ui-piclist ui-piclist-col-4 ui-piclist-3-2 ui-piclist-100">
+            {% get_sonid_all 12 %}
+			{% for_rs top="4" table="manager_modelpromodel" join="left join manager_contentmodel on manager_modelpromodel.cid=manager_contentmodel.id" where="islock=1 and classid in({{subs}}) and isnice=1" order="ontop desc,ordnum desc,id desc" %}
+            <div class="ui-piclist-item">
+				<div class="ui-piclist-image"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}"><img src="{% thumb rs.pic 400 400 %}" alt="{{rs.title}}" /></a></div>
+				<div class="ui-piclist-body">
+                    <div class="ui-piclist-flex">
+                        <div class="ui-piclist-title ui-text-center ui-text-hide"><a href="{% url 'home:pro_show' rs.cid %}" title="{{rs.title}}">{{rs.title}}</a></div>
+                        {% if rs.price %}
+                        <div class="ui-piclist-price"><strong>￥{{rs.price}}</strong></div>
+                        {% else %}
+                        <div class="ui-piclist-price"><strong>免费</strong></div>
+                        {% endif %}
+                    </div>
+				</div>
+			</div>
+			{% endfor_rs %}
+		</div>
+	</div>
+    
+    
 {% endblock %}
 {% include "home/include/foot.html" %}
 </body>
